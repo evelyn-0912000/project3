@@ -78,19 +78,5 @@ namespace Meteen_Rotterdam {
 		}
 	}
 
-  public class Pan
-  {
-    private object grabbedObject;
-    private Vector2 grabOffset;
-    private MouseState mouseState; // update each Update() call4
-
-    void Update()
-    {
-      if (mouseState.LeftButton == ButtonState.Pressed)
-        System.Console.WriteLine("hello");
-    }
-
-
-  }
 }
 

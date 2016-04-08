@@ -1,6 +1,10 @@
 ﻿using System;
 
 namespace Meteen_Rotterdam {
+	enum Weather {
+		raining,
+		clear
+	};
 #if WINDOWS || LINUX
     /// <summary>
     /// The main class.
@@ -15,6 +19,7 @@ namespace Meteen_Rotterdam {
         {
             using (var game = new Game1())
                 game.Run();
+								
         }
     }
 #endif

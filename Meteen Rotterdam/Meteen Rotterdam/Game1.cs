@@ -9,10 +9,12 @@ namespace Meteen_Rotterdam {
 	public class Game1 : Game {
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
+		private Texture2D map;
 
 		public Game1() {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+			
 		}
 
 		/// <summary>
@@ -23,7 +25,9 @@ namespace Meteen_Rotterdam {
 		/// </summary>
 		protected override void Initialize() {
 			// TODO: Add your initialization logic here
-
+			this.graphics.PreferredBackBufferHeight = 779;
+			this.graphics.PreferredBackBufferWidth = 1300;
+			this.graphics.ApplyChanges();
 			base.Initialize();
 		}
 
@@ -34,7 +38,7 @@ namespace Meteen_Rotterdam {
 		protected override void LoadContent() {
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-
+			map = Content.Load<Texture2D>("map.png");
 			// TODO: use this.Content to load your game content here
 		}
 
@@ -65,8 +69,10 @@ namespace Meteen_Rotterdam {
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime) {
-			GraphicsDevice.Clear(Color.CornflowerBlue);
-
+			GraphicsDevice.Clear(Color.Gray);
+			spriteBatch.Begin();
+			spriteBatch.Draw(map, new Rectangle(0, 0, map.Width, map.Height), Color.Gray);
+			spriteBatch.End();
 			// TODO: Add your drawing code here
 
 			base.Draw(gameTime);

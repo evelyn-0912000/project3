@@ -7,7 +7,7 @@ using System.Net;
 
 namespace Meteen_Rotterdam {
 	class Fetcher {
-		public static Tuple<double, double> Fetch (string inp, string filter) {
+		public static Tuple<double, double> FetchCoordinates (string inp, string filter) {
 			if (inp == "cls") {
 				Console.Clear();
 				return Tuple.Create<double, double>(0.0, 0.0);

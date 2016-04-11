@@ -2,394 +2,166 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Script.Serialization;
+using System.Net;
 
 namespace Meteen_Rotterdam {
 	class Fetcher {
-		public static Tuple<double,Weather> FetchWeather() {
+		public static Tuple<double, double> Fetch (string inp, string filter) {
+			if (inp == "cls") {
+				Console.Clear();
+				return Tuple.Create<double, double>(0.0, 0.0);
+			}
+			else {
+				using (var webClient = new System.Net.WebClient()) {
+
+					var json = webClient.DownloadString("http://maps.googleapis.com/maps/api/geocode/json?address=" + inp);
+					RootObject data = new JavaScriptSerializer().Deserialize<RootObject>(json);
+					Console.WriteLine("Filter: '" + filter + "'\n");
+					if (data.status == "OK") {
+						data = Fetcher.Filter(filter, data);
+						int i = 0;
+						foreach (var item in data.results) {
+							i += 1;
+						}
+						if (i == 1) {
+							foreach (var item in data.results) {
+								int componentcount = 0;
+								foreach (var component in item.address_components) {
+									componentcount += 1;
+								}
+								Console.WriteLine(i.ToString() + ". " + "(" + item.geometry.location.lat + "," + item.geometry.location.lng + ") - " + item.formatted_address);
+								var coordinates = Tuple.Create<double, double>(item.geometry.location.lat, item.geometry.location.lng);
+								return coordinates;
+							}
+						}
+						else {
+							Console.WriteLine("Multiple results found, please refine search");
+							return Tuple.Create<double, double>(0.0, 0.0);
+						}
+					}
+					else {
+						Console.WriteLine("No results found");
+						return Tuple.Create<double, double>(0.0, 0.0);
+					}
+				}
+
+			}
+			return Tuple.Create<double, double>(0.0, 0.0);
+		}
+		public static RootObject Filter(string tofilter, RootObject filtrate) {
+			RootObject toReturn = new RootObject();
+			if (tofilter != null) {
+				List<Result> results = new List<Result>();
+				toReturn.status = "OK";
+				foreach (var item in filtrate.results) {
+					bool containsFilter = false;
+					foreach (var component in item.address_components) {
+						if (component.long_name == tofilter) {
+							containsFilter = true;
+						}
+					}
+					if (containsFilter == true) {
+						results.Add(item);
+					}
+				}
+				toReturn.results = results;
+			}
+			else {
+				toReturn = filtrate;
+			}
+			return toReturn;
+		}
+
+		public static bool CheckInternet() {
+			try {
+				using (var client = new System.Net.WebClient()) {
+					using (var page = client.OpenRead("http://www.google.com/")) {
+						return true;
+					}
+				}
+			}
+			catch {
+				return false;
+			}
+		}
+		public static Tuple<string, Weather, bool, string, string> FetchWeather(string lat, string lon) {
 			//Tempature, weather enumd
-			
+			using (WebClient webCl = new WebClient()) {
+				byte[] data = webCl.DownloadData("http://gps.buienradar.nl/getrr.php?lat=" + lat + "&lon=" + lon);
+				string result = System.Text.Encoding.UTF8.GetString(data).Replace(System.Environment.NewLine, " ").TrimEnd(" "[0]);
+				int defaultOffset = 1; //1 + (1 for every 5 minutes after the current time) -> 2 is current time
+				string[] dataArray = result.Split(" "[0]);
+				//Checks if its raining at the current time
+				string weatherNow = dataArray[defaultOffset];
+
+				//Checks here if it will start raining somewhere troughout the day
+				bool goingToRain = false;
+				string time = "";
+				string secondheavyness = "";
+				if (weatherNow.Substring(0, 3) == "000") {
+					foreach (string line in dataArray) {
+						time = line.Substring(4, 5);
+						if (line.Substring(0, 3) != "000") {
+							goingToRain = true;
+							secondheavyness = line.Substring(0, 3);
+							break;
+						}
+					}
+				}
+				if (weatherNow.Substring(0, 3) == "000") {
+					return new Tuple<string, Weather, bool, string, string>(weatherNow.Substring(0, 3), Weather.clear, goingToRain, time, secondheavyness);
+				}
+				else {
+					return new Tuple<string, Weather, bool, string, string>(weatherNow.Substring(0, 3), Weather.raining, goingToRain, time, secondheavyness);
+				}
+			}
 		}
 	}
-
-
-	//Buienradar classes
-	[XmlRoot(ElementName = "image")]
-	public class Image {
-		[XmlElement(ElementName = "titel")]
-		public string Titel { get; set; }
-		[XmlElement(ElementName = "link")]
-		public string Link { get; set; }
-		[XmlElement(ElementName = "url")]
-		public string Url { get; set; }
-		[XmlElement(ElementName = "width")]
-		public string Width { get; set; }
-		[XmlElement(ElementName = "height")]
-		public string Height { get; set; }
+	//JSON DECLARATIONS
+	public class AddressComponent {
+		public string long_name { get; set; }
+		public string short_name { get; set; }
+		public List<string> types { get; set; }
 	}
 
-	[XmlRoot(ElementName = "stationnaam")]
-	public class Stationnaam {
-		[XmlAttribute(AttributeName = "regio")]
-		public string Regio { get; set; }
-		[XmlText]
-		public string Text { get; set; }
+	public class Location {
+		public double lat { get; set; }
+		public double lng { get; set; }
 	}
 
-	[XmlRoot(ElementName = "icoonactueel")]
-	public class Icoonactueel {
-		[XmlAttribute(AttributeName = "zin")]
-		public string Zin { get; set; }
-		[XmlAttribute(AttributeName = "ID")]
-		public string ID { get; set; }
-		[XmlText]
-		public string Text { get; set; }
+	public class Northeast {
+		public double lat { get; set; }
+		public double lng { get; set; }
 	}
 
-	[XmlRoot(ElementName = "weerstation")]
-	public class Weerstation {
-		[XmlElement(ElementName = "stationcode")]
-		public string Stationcode { get; set; }
-		[XmlElement(ElementName = "stationnaam")]
-		public Stationnaam Stationnaam { get; set; }
-		[XmlElement(ElementName = "lat")]
-		public string Lat { get; set; }
-		[XmlElement(ElementName = "lon")]
-		public string Lon { get; set; }
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "luchtvochtigheid")]
-		public string Luchtvochtigheid { get; set; }
-		[XmlElement(ElementName = "temperatuurGC")]
-		public string TemperatuurGC { get; set; }
-		[XmlElement(ElementName = "windsnelheidMS")]
-		public string WindsnelheidMS { get; set; }
-		[XmlElement(ElementName = "windsnelheidBF")]
-		public string WindsnelheidBF { get; set; }
-		[XmlElement(ElementName = "windrichtingGR")]
-		public string WindrichtingGR { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "luchtdruk")]
-		public string Luchtdruk { get; set; }
-		[XmlElement(ElementName = "zichtmeters")]
-		public string Zichtmeters { get; set; }
-		[XmlElement(ElementName = "windstotenMS")]
-		public string WindstotenMS { get; set; }
-		[XmlElement(ElementName = "regenMMPU")]
-		public string RegenMMPU { get; set; }
-		[XmlElement(ElementName = "icoonactueel")]
-		public Icoonactueel Icoonactueel { get; set; }
-		[XmlElement(ElementName = "temperatuur10cm")]
-		public string Temperatuur10cm { get; set; }
-		[XmlElement(ElementName = "url")]
-		public string Url { get; set; }
-		[XmlElement(ElementName = "latGraden")]
-		public string LatGraden { get; set; }
-		[XmlElement(ElementName = "lonGraden")]
-		public string LonGraden { get; set; }
-		[XmlAttribute(AttributeName = "id")]
-		public string Id { get; set; }
+	public class Southwest {
+		public double lat { get; set; }
+		public double lng { get; set; }
 	}
 
-	[XmlRoot(ElementName = "weerstations")]
-	public class Weerstations {
-		[XmlElement(ElementName = "weerstation")]
-		public List<Weerstation> Weerstation { get; set; }
+	public class Viewport {
+		public Northeast northeast { get; set; }
+		public Southwest southwest { get; set; }
 	}
 
-	[XmlRoot(ElementName = "buienindex")]
-	public class Buienindex {
-		[XmlElement(ElementName = "waardepercentage")]
-		public string Waardepercentage { get; set; }
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
+	public class Geometry {
+		public Location location { get; set; }
+		public string location_type { get; set; }
+		public Viewport viewport { get; set; }
 	}
 
-	[XmlRoot(ElementName = "buienradar")]
-	public class Buienradar {
-		[XmlElement(ElementName = "url")]
-		public string Url { get; set; }
-		[XmlElement(ElementName = "urlbackup")]
-		public string Urlbackup { get; set; }
-		[XmlElement(ElementName = "icoonactueel")]
-		public Icoonactueel Icoonactueel { get; set; }
-		[XmlElement(ElementName = "zonopkomst")]
-		public string Zonopkomst { get; set; }
-		[XmlElement(ElementName = "zononder")]
-		public string Zononder { get; set; }
-		[XmlElement(ElementName = "aantalonweer")]
-		public string Aantalonweer { get; set; }
-		[XmlElement(ElementName = "aantalhagel")]
-		public string Aantalhagel { get; set; }
+	public class Result {
+		public List<AddressComponent> address_components { get; set; }
+		public string formatted_address { get; set; }
+		public Geometry geometry { get; set; }
+		public string place_id { get; set; }
+		public List<string> types { get; set; }
 	}
 
-	[XmlRoot(ElementName = "actueel_weer")]
-	public class Actueel_weer {
-		[XmlElement(ElementName = "weerstations")]
-		public Weerstations Weerstations { get; set; }
-		[XmlElement(ElementName = "buienindex")]
-		public Buienindex Buienindex { get; set; }
-		[XmlElement(ElementName = "buienradar")]
-		public Buienradar Buienradar { get; set; }
-	}
-
-	[XmlRoot(ElementName = "tekst_middellang")]
-	public class Tekst_middellang {
-		[XmlAttribute(AttributeName = "periode")]
-		public string Periode { get; set; }
-		[XmlText]
-		public string Text { get; set; }
-	}
-
-	[XmlRoot(ElementName = "tekst_lang")]
-	public class Tekst_lang {
-		[XmlAttribute(AttributeName = "periode")]
-		public string Periode { get; set; }
-		[XmlText]
-		public string Text { get; set; }
-	}
-
-	[XmlRoot(ElementName = "icoon")]
-	public class Icoon {
-		[XmlAttribute(AttributeName = "ID")]
-		public string ID { get; set; }
-		[XmlText]
-		public string Text { get; set; }
-	}
-
-	[XmlRoot(ElementName = "dag-plus1")]
-	public class Dagplus1 {
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "dagweek")]
-		public string Dagweek { get; set; }
-		[XmlElement(ElementName = "kanszon")]
-		public string Kanszon { get; set; }
-		[XmlElement(ElementName = "kansregen")]
-		public string Kansregen { get; set; }
-		[XmlElement(ElementName = "minmmregen")]
-		public string Minmmregen { get; set; }
-		[XmlElement(ElementName = "maxmmregen")]
-		public string Maxmmregen { get; set; }
-		[XmlElement(ElementName = "mintemp")]
-		public string Mintemp { get; set; }
-		[XmlElement(ElementName = "mintempmax")]
-		public string Mintempmax { get; set; }
-		[XmlElement(ElementName = "maxtemp")]
-		public string Maxtemp { get; set; }
-		[XmlElement(ElementName = "maxtempmax")]
-		public string Maxtempmax { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "windkracht")]
-		public string Windkracht { get; set; }
-		[XmlElement(ElementName = "icoon")]
-		public Icoon Icoon { get; set; }
-		[XmlElement(ElementName = "sneeuwcms")]
-		public string Sneeuwcms { get; set; }
-	}
-
-	[XmlRoot(ElementName = "dag-plus2")]
-	public class Dagplus2 {
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "dagweek")]
-		public string Dagweek { get; set; }
-		[XmlElement(ElementName = "kanszon")]
-		public string Kanszon { get; set; }
-		[XmlElement(ElementName = "kansregen")]
-		public string Kansregen { get; set; }
-		[XmlElement(ElementName = "minmmregen")]
-		public string Minmmregen { get; set; }
-		[XmlElement(ElementName = "maxmmregen")]
-		public string Maxmmregen { get; set; }
-		[XmlElement(ElementName = "mintemp")]
-		public string Mintemp { get; set; }
-		[XmlElement(ElementName = "mintempmax")]
-		public string Mintempmax { get; set; }
-		[XmlElement(ElementName = "maxtemp")]
-		public string Maxtemp { get; set; }
-		[XmlElement(ElementName = "maxtempmax")]
-		public string Maxtempmax { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "windkracht")]
-		public string Windkracht { get; set; }
-		[XmlElement(ElementName = "icoon")]
-		public Icoon Icoon { get; set; }
-		[XmlElement(ElementName = "sneeuwcms")]
-		public string Sneeuwcms { get; set; }
-	}
-
-	[XmlRoot(ElementName = "dag-plus3")]
-	public class Dagplus3 {
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "dagweek")]
-		public string Dagweek { get; set; }
-		[XmlElement(ElementName = "kanszon")]
-		public string Kanszon { get; set; }
-		[XmlElement(ElementName = "kansregen")]
-		public string Kansregen { get; set; }
-		[XmlElement(ElementName = "minmmregen")]
-		public string Minmmregen { get; set; }
-		[XmlElement(ElementName = "maxmmregen")]
-		public string Maxmmregen { get; set; }
-		[XmlElement(ElementName = "mintemp")]
-		public string Mintemp { get; set; }
-		[XmlElement(ElementName = "mintempmax")]
-		public string Mintempmax { get; set; }
-		[XmlElement(ElementName = "maxtemp")]
-		public string Maxtemp { get; set; }
-		[XmlElement(ElementName = "maxtempmax")]
-		public string Maxtempmax { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "windkracht")]
-		public string Windkracht { get; set; }
-		[XmlElement(ElementName = "icoon")]
-		public Icoon Icoon { get; set; }
-		[XmlElement(ElementName = "sneeuwcms")]
-		public string Sneeuwcms { get; set; }
-	}
-
-	[XmlRoot(ElementName = "dag-plus4")]
-	public class Dagplus4 {
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "dagweek")]
-		public string Dagweek { get; set; }
-		[XmlElement(ElementName = "kanszon")]
-		public string Kanszon { get; set; }
-		[XmlElement(ElementName = "kansregen")]
-		public string Kansregen { get; set; }
-		[XmlElement(ElementName = "minmmregen")]
-		public string Minmmregen { get; set; }
-		[XmlElement(ElementName = "maxmmregen")]
-		public string Maxmmregen { get; set; }
-		[XmlElement(ElementName = "mintemp")]
-		public string Mintemp { get; set; }
-		[XmlElement(ElementName = "mintempmax")]
-		public string Mintempmax { get; set; }
-		[XmlElement(ElementName = "maxtemp")]
-		public string Maxtemp { get; set; }
-		[XmlElement(ElementName = "maxtempmax")]
-		public string Maxtempmax { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "windkracht")]
-		public string Windkracht { get; set; }
-		[XmlElement(ElementName = "icoon")]
-		public Icoon Icoon { get; set; }
-		[XmlElement(ElementName = "sneeuwcms")]
-		public string Sneeuwcms { get; set; }
-	}
-
-	[XmlRoot(ElementName = "dag-plus5")]
-	public class Dagplus5 {
-		[XmlElement(ElementName = "datum")]
-		public string Datum { get; set; }
-		[XmlElement(ElementName = "dagweek")]
-		public string Dagweek { get; set; }
-		[XmlElement(ElementName = "kanszon")]
-		public string Kanszon { get; set; }
-		[XmlElement(ElementName = "kansregen")]
-		public string Kansregen { get; set; }
-		[XmlElement(ElementName = "minmmregen")]
-		public string Minmmregen { get; set; }
-		[XmlElement(ElementName = "maxmmregen")]
-		public string Maxmmregen { get; set; }
-		[XmlElement(ElementName = "mintemp")]
-		public string Mintemp { get; set; }
-		[XmlElement(ElementName = "mintempmax")]
-		public string Mintempmax { get; set; }
-		[XmlElement(ElementName = "maxtemp")]
-		public string Maxtemp { get; set; }
-		[XmlElement(ElementName = "maxtempmax")]
-		public string Maxtempmax { get; set; }
-		[XmlElement(ElementName = "windrichting")]
-		public string Windrichting { get; set; }
-		[XmlElement(ElementName = "windkracht")]
-		public string Windkracht { get; set; }
-		[XmlElement(ElementName = "icoon")]
-		public Icoon Icoon { get; set; }
-		[XmlElement(ElementName = "sneeuwcms")]
-		public string Sneeuwcms { get; set; }
-	}
-
-	[XmlRoot(ElementName = "verwachting_meerdaags")]
-	public class Verwachting_meerdaags {
-		[XmlElement(ElementName = "url")]
-		public string Url { get; set; }
-		[XmlElement(ElementName = "urlbackup")]
-		public string Urlbackup { get; set; }
-		[XmlElement(ElementName = "tekst_middellang")]
-		public Tekst_middellang Tekst_middellang { get; set; }
-		[XmlElement(ElementName = "tekst_lang")]
-		public Tekst_lang Tekst_lang { get; set; }
-		[XmlElement(ElementName = "dag-plus1")]
-		public Dagplus1 Dagplus1 { get; set; }
-		[XmlElement(ElementName = "dag-plus2")]
-		public Dagplus2 Dagplus2 { get; set; }
-		[XmlElement(ElementName = "dag-plus3")]
-		public Dagplus3 Dagplus3 { get; set; }
-		[XmlElement(ElementName = "dag-plus4")]
-		public Dagplus4 Dagplus4 { get; set; }
-		[XmlElement(ElementName = "dag-plus5")]
-		public Dagplus5 Dagplus5 { get; set; }
-	}
-
-	[XmlRoot(ElementName = "verwachting_vandaag")]
-	public class Verwachting_vandaag {
-		[XmlElement(ElementName = "url")]
-		public string Url { get; set; }
-		[XmlElement(ElementName = "urlbackup")]
-		public string Urlbackup { get; set; }
-		[XmlElement(ElementName = "titel")]
-		public string Titel { get; set; }
-		[XmlElement(ElementName = "tijdweerbericht")]
-		public string Tijdweerbericht { get; set; }
-		[XmlElement(ElementName = "samenvatting")]
-		public string Samenvatting { get; set; }
-		[XmlElement(ElementName = "tekst")]
-		public string Tekst { get; set; }
-		[XmlElement(ElementName = "formattedtekst")]
-		public string Formattedtekst { get; set; }
-	}
-
-	[XmlRoot(ElementName = "weergegevens")]
-	public class Weergegevens {
-		[XmlElement(ElementName = "titel")]
-		public string Titel { get; set; }
-		[XmlElement(ElementName = "link")]
-		public string Link { get; set; }
-		[XmlElement(ElementName = "omschrijving")]
-		public string Omschrijving { get; set; }
-		[XmlElement(ElementName = "language")]
-		public string Language { get; set; }
-		[XmlElement(ElementName = "copyright")]
-		public string Copyright { get; set; }
-		[XmlElement(ElementName = "gebruik")]
-		public string Gebruik { get; set; }
-		[XmlElement(ElementName = "image")]
-		public Image Image { get; set; }
-		[XmlElement(ElementName = "actueel_weer")]
-		public Actueel_weer Actueel_weer { get; set; }
-		[XmlElement(ElementName = "verwachting_meerdaags")]
-		public Verwachting_meerdaags Verwachting_meerdaags { get; set; }
-		[XmlElement(ElementName = "verwachting_vandaag")]
-		public Verwachting_vandaag Verwachting_vandaag { get; set; }
-	}
-
-	[XmlRoot(ElementName = "buienradarnl")]
-	public class Buienradarnl {
-		[XmlElement(ElementName = "weergegevens")]
-		public Weergegevens Weergegevens { get; set; }
-	}
-
-	[XmlRoot(ElementName = "xml")]
-	public class Xml {
-		[XmlElement(ElementName = "buienradarnl")]
-		public Buienradarnl Buienradarnl { get; set; }
+	public class RootObject {
+		public List<Result> results { get; set; }
+		public string status { get; set; }
 	}
 }
+

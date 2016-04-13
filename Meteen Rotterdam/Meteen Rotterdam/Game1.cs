@@ -66,7 +66,7 @@ namespace Meteen_Rotterdam
       {
         float lat = Convert.ToSingle(row[0]);
         float lon = Convert.ToSingle(row[1]);
-        points.Add(new Map(map1.GetCoordinates(lat, lon), Content.Load<Texture2D>("pointer.png")));
+        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
       }
     }
 
@@ -133,6 +133,9 @@ namespace Meteen_Rotterdam
       foreach(Map point in points)
       {
         Vector2 currentPos = point.printPosition();
+        Console.WriteLine(String.Format("x is {0} and y = {1}", currentPos.X, currentPos.Y));
+        Vector2 ultimatePos = map1.getMiddle() + map1.GetCoordinates(currentPos.X, currentPos.Y);
+        Console.WriteLine(String.Format("And in the end it is {0} and {1}", ultimatePos.X, ultimatePos.Y));
         point.UpdateVirPos(map1.getMiddle() + point.GetCoordinates(currentPos.X, currentPos.Y));
       }
     }

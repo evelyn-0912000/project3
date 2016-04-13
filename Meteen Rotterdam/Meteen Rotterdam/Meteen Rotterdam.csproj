@@ -62,6 +62,7 @@
     <Content Include="Content\map.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\pointer.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

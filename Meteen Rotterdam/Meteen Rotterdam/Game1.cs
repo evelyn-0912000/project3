@@ -85,11 +85,12 @@ namespace Meteen_Rotterdam
         else
         {
           mapPosition = new Vector2(mousePosition.X + grabOffset.X, mousePosition.Y + grabOffset.Y);
+          map1.UpdatePos(mapPosition);
         }
         
-        System.Console.WriteLine("OFFSET" + grabOffset);
-        System.Console.WriteLine("MOUSE" + mousePosition);
-        System.Console.WriteLine("MAP" + mapPosition);
+        //System.Console.WriteLine("OFFSET" + grabOffset);
+        //System.Console.WriteLine("MOUSE" + mousePosition);
+        //System.Console.WriteLine("MAP" + mapPosition);
         
       }
       if (mouseState.LeftButton == ButtonState.Released)
@@ -115,8 +116,9 @@ namespace Meteen_Rotterdam
 
       base.Draw(gameTime);
 
-      map1.UpdatePos(mapPosition);
+      
     }
+
 	}
 }
 

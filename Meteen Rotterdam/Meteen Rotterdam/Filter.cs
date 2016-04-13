@@ -127,7 +127,7 @@ namespace Meteen_Rotterdam
                 }
             }
 
-            List<List<string>> results = executeQuery(query, connectionString, 2);
+            List<List<string>> results = executeQuery(query, connectionString, pairs.Length);
 
             return results;
         }

@@ -9,10 +9,10 @@ namespace Meteen_Rotterdam
   {
     Texture2D texture;
     Vector2 position;
-    public double Alongitude = (51.965416);
-    public double Alatitude = (4.414179);
-    public float Blongitude = (51.864696f);
-    public float Blatitude = (4.579965f);
+    private double Clongitude = (51.907744);
+    private double Clatitude = (4.498591);
+    
+
     public float test = ((51.965416f - 51.864696f)+ 10);
     public float test2 = ((4.414179f - 4.579965f)+ 10);
    
@@ -28,19 +28,25 @@ namespace Meteen_Rotterdam
       this.position = position;
     }
 
-    public void GetCoordinates(double latitude, double longitude)
+    public Vector2 GetCoordinates(double latitude, double longitude)
     {
-      double x = longitude * Math.Cos(latitude);
-      double y = latitude;
-      System.Console.WriteLine(x);
-      System.Console.WriteLine(y);
+      float scale = 0.0001f;
+      //double x = Math.Round((longitude * Math.Cos(51.907744)), 5);
+      double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
+      //double y = Math.Round(latitude, 5);
+      double y = Math.Round((latitude - 51.907744), 5);
+      float xf = (float) x;
+      float yf = (float) y;
+      Vector2 Coordinates = new Vector2((xf/ scale), (yf/ scale));
+      return Coordinates;
     }
 
 
     public void Draw(SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(texture, position, Color.White);
-      GetCoordinates(Alongitude, Blongitude);
+      System.Console.WriteLine(GetCoordinates(51.907744, 4.498591));
+      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516)); 
 
       int tst = (int)test;
       //public Rectangle square = new Rectangle(0, 0, tst, 100);

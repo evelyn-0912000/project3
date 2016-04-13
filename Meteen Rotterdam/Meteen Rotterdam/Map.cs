@@ -38,7 +38,7 @@ namespace Meteen_Rotterdam
 
     public Vector2 GetCoordinates(double latitude, double longitude)
     {
-      float scale = 0.0000017f;
+      float scale = 0.0000052f;
       //double x = Math.Round((longitude * Math.Cos(51.907744)), 5);
       double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
       //double y = Math.Round(latitude, 5);

@@ -42,10 +42,10 @@ namespace Meteen_Rotterdam
 
     public Vector2 GetCoordinates(double latitude, double longitude)
     {
-      float scale = 0.0000107f;
+      float scale = 0.0000102f;
       double x = ((longitude * Math.Cos(centerLatitude)) - (centerLongitude * Math.Cos(centerLatitude)))*-1;
       //double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
-      double y = ((latitude - centerLatitude) /7.1f)*-1;
+      double y = ((latitude - centerLatitude) /7.47f)*-1;
       //double y = Math.Round((latitude - 51.907744), 5)*-1;
       float xf = (float) x;
       float yf = (float) y;

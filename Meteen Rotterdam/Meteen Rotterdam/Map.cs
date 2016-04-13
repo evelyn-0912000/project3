@@ -11,13 +11,16 @@ namespace Meteen_Rotterdam
 		Vector2 printPosition();
 		Texture2D printTexture();
 		Vector2 getMiddle();
+    
 	}
 
   public class Map : Drawable
   {
     Texture2D texture;
     Vector2 position;
-   
+    double centerLatitude = (51.907744);
+    double centerLongitude = (4.498591);
+
     public Map(Vector2 position, Texture2D texture)
     {
       this.texture = texture;
@@ -38,11 +41,11 @@ namespace Meteen_Rotterdam
 
     public Vector2 GetCoordinates(double latitude, double longitude)
     {
-      float scale = 0.0000017f;
-      //double x = Math.Round((longitude * Math.Cos(51.907744)), 5);
-      double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
-      //double y = Math.Round(latitude, 5);
-      double y = Math.Round((latitude - 51.907744), 5)*-1;
+      float scale = 0.00000584f;
+      double x = ((longitude * Math.Cos(centerLatitude)) - (centerLongitude * Math.Cos(centerLatitude)))*-1;
+      //double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
+      double y = ((latitude - 51.907744)/10)*-1;
+      //double y = Math.Round((latitude - 51.907744), 5)*-1;
       float xf = (float) x;
       float yf = (float) y;
       Vector2 Coordinates = new Vector2((xf/ scale), (yf/ scale));
@@ -54,8 +57,9 @@ namespace Meteen_Rotterdam
     {
       spriteBatch.Draw(texture, position, Color.White);
       System.Console.WriteLine(GetCoordinates(51.907744, 4.498591));
-      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516)); 
-
+      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516));
+      System.Console.WriteLine(GetCoordinates(51.913171, 4.493527));
+      System.Console.WriteLine(GetCoordinates(51.911503, 4.512609));
     }
 
 		//public Vector2 getMiddle() {

@@ -18,6 +18,8 @@ namespace Meteen_Rotterdam
     private Map map1;
 		private Map pointer1;
     private Map pointer2;
+    private Map pointer3;
+    private Map pointer4;
 
     public Game1()
     {
@@ -46,10 +48,12 @@ namespace Meteen_Rotterdam
     {
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
-      mapimg = Content.Load<Texture2D>("map.png");
-      map1 = new Map(mapPosition, mapimg);
+      mapimg = Content.Load<Texture2D>("map.gif");
+      map1 = new Map(GetCenter(mapimg, graphics), mapimg);
 			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       pointer2 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      pointer3 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      pointer4 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       // TODO: use this.Content to load your game content here
     }
 
@@ -62,12 +66,19 @@ namespace Meteen_Rotterdam
 			// TODO: Unload any non ContentManager content here
 		}
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Update(GameTime gameTime)
+    public static Vector2 GetCenter(Texture2D mapimg, GraphicsDeviceManager graphics)
+    {
+      int a = (graphics.PreferredBackBufferWidth/ 2) - (mapimg.Width / 2);
+      int b = (graphics.PreferredBackBufferHeight / 2) - (mapimg.Height / 2);
+      return new Vector2(a, b);
+    }
+
+    /// <summary>
+    /// Allows the game to run logic such as updating the world,
+    /// checking for collisions, gathering input, and playing audio.
+    /// </summary>
+    /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    protected override void Update(GameTime gameTime)
     {
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
@@ -100,8 +111,11 @@ namespace Meteen_Rotterdam
       {
         grabOffset = Vector2.Zero;
       }
-			pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
+      System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
+      pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
       pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907883, 4.493516)));
+      pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.913171, 4.493527)));
+      pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917724, 4.482567)));
     }
 
 		/// <summary>
@@ -116,6 +130,8 @@ namespace Meteen_Rotterdam
       map1.Draw(spriteBatch);
 			pointer1.Draw(spriteBatch);
       pointer2.Draw(spriteBatch);
+      pointer3.Draw(spriteBatch);
+      pointer4.Draw(spriteBatch);
       spriteBatch.End();
 
       // TODO: Add your drawing code here

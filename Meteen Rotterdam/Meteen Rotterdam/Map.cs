@@ -18,8 +18,8 @@ namespace Meteen_Rotterdam
   {
     Texture2D texture;
     Vector2 position;
-    double centerLatitude = (51.907744);
-    double centerLongitude = (4.498591);
+    double centerLatitude = (51.921045);
+    double centerLongitude = (4.493159);
    
     public Map(Vector2 position, Texture2D texture)
     {
@@ -42,14 +42,14 @@ namespace Meteen_Rotterdam
 
     public Vector2 GetCoordinates(double latitude, double longitude)
     {
-      float scale = 0.00000584f;
+      float scale = 0.0000107f;
       double x = ((longitude * Math.Cos(centerLatitude)) - (centerLongitude * Math.Cos(centerLatitude)))*-1;
       //double x = Math.Round((longitude * Math.Cos(51.907744)) - (4.498591 * Math.Cos(51.907744)), 5)*-1;
-      double y = ((latitude - 51.907744)/10)*-1;
+      double y = ((latitude - centerLatitude) /7.1f)*-1;
       //double y = Math.Round((latitude - 51.907744), 5)*-1;
       float xf = (float) x;
       float yf = (float) y;
-      Vector2 Coordinates = new Vector2((xf/ scale), (yf/ scale));
+      Vector2 Coordinates = new Vector2(((xf/ scale)), (yf/ scale));
       return Coordinates;
     }
 

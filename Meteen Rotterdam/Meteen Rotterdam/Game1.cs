@@ -16,6 +16,7 @@ namespace Meteen_Rotterdam
     private MouseState mouseState;
     private Vector2 mapPosition;
     private Map map1;
+		private Map pointer1;
 
     public Game1()
     {
@@ -46,7 +47,7 @@ namespace Meteen_Rotterdam
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.png");
       map1 = new Map(mapPosition, mapimg);
-
+			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       // TODO: use this.Content to load your game content here
     }
 
@@ -97,7 +98,7 @@ namespace Meteen_Rotterdam
       {
         grabOffset = Vector2.Zero;
       }
-
+			pointer1.UpdatePos(map1.getMiddle());
     }
 
 		/// <summary>
@@ -110,6 +111,7 @@ namespace Meteen_Rotterdam
       spriteBatch.Begin();
       //spriteBatch.Draw(map, new Vector2(0, 0), Color.White);
       map1.Draw(spriteBatch);
+			pointer1.Draw(spriteBatch);
       spriteBatch.End();
 
       // TODO: Add your drawing code here

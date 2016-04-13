@@ -30,7 +30,7 @@ namespace Meteen_Rotterdam
             }
         }
 
-        List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
+        static List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Meteen_Rotterdam
                             ON(o.occasion_name = a.occasion)";
 
             bool firstPair = true;
-            bool returnColumns = false
+            bool returnColumns = false;
 
             foreach (Pair pair in pairs)
             {
@@ -139,7 +139,7 @@ namespace Meteen_Rotterdam
             return results;
         }
 
-        List<List<string>> initialMap(string connectionString)
+        public static List<List<string>> initialMap(string connectionString)
         {
             string query = @"SELECT a.x, a.y
                             FROM attractions AS a;";

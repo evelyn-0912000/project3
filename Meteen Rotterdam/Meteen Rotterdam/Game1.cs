@@ -94,7 +94,7 @@ namespace Meteen_Rotterdam
         Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
         if (grabOffset == Vector2.Zero)
         {
-          grabOffset = new Vector2(mapPosition.X - mousePosition.X, mapPosition.Y - mousePosition.Y);
+          grabOffset = new Vector2(map1.printPosition().X - mousePosition.X, map1.printPosition().Y - mousePosition.Y);
         }
         else
         {

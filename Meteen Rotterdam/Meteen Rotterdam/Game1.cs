@@ -102,7 +102,7 @@ namespace Meteen_Rotterdam
           map1.UpdatePos(mapPosition);
         }
         
-        //System.Console.WriteLine("OFFSET" + grabOffset);
+        System.Console.WriteLine("OFFSET" + grabOffset);
         //System.Console.WriteLine("MOUSE" + mousePosition);
         //System.Console.WriteLine("MAP" + mapPosition);
         

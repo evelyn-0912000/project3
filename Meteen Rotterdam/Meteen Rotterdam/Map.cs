@@ -20,7 +20,7 @@ namespace Meteen_Rotterdam
     Vector2 position;
     double centerLatitude = (51.907744);
     double centerLongitude = (4.498591);
-
+   
     public Map(Vector2 position, Texture2D texture)
     {
       this.texture = texture;
@@ -57,7 +57,7 @@ namespace Meteen_Rotterdam
     {
       spriteBatch.Draw(texture, position, Color.White);
       System.Console.WriteLine(GetCoordinates(51.907744, 4.498591));
-      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516));
+      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516)); 
       System.Console.WriteLine(GetCoordinates(51.913171, 4.493527));
       System.Console.WriteLine(GetCoordinates(51.911503, 4.512609));
     }

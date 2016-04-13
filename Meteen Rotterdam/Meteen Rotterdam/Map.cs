@@ -42,7 +42,6 @@ namespace Meteen_Rotterdam
 			return this.texture;
 		}
 
-    public void GetCoordinates(double latitude, double longitude)
     public Vector2 GetCoordinates(double latitude, double longitude)
     {
       float scale = 0.0001f;

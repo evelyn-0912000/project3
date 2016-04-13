@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 
 namespace Meteen_Rotterdam
 {
@@ -18,7 +17,7 @@ namespace Meteen_Rotterdam
     private Vector2 mapPosition;
     private Map map1;
 		private Map pointer1;
-		private List<Drawable> drawings;
+    private Map pointer2;
 
     public Game1()
     {
@@ -50,9 +49,7 @@ namespace Meteen_Rotterdam
       mapimg = Content.Load<Texture2D>("map.png");
       map1 = new Map(mapPosition, mapimg);
 			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-			List<Drawable> drawings = new List<Drawable>;
-			drawings.Add(map1);
-			drawings.Add(pointer1);
+      pointer2 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       // TODO: use this.Content to load your game content here
     }
 
@@ -103,7 +100,8 @@ namespace Meteen_Rotterdam
       {
         grabOffset = Vector2.Zero;
       }
-			pointer1.UpdatePos(map1.getMiddle() + map1.GetCoordinates(53,4));
+			pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
+      pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907883, 4.493516)));
     }
 
 		/// <summary>
@@ -117,7 +115,7 @@ namespace Meteen_Rotterdam
       //spriteBatch.Draw(map, new Vector2(0, 0), Color.White);
       map1.Draw(spriteBatch);
 			pointer1.Draw(spriteBatch);
-
+      pointer2.Draw(spriteBatch);
       spriteBatch.End();
 
       // TODO: Add your drawing code here

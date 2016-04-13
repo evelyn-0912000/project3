@@ -24,6 +24,7 @@ namespace Meteen_Rotterdam
     public Map(Vector2 position, Texture2D texture)
     {
       this.texture = texture;
+			this.position = position;
     }
 
     public void UpdatePos(Vector2 position)

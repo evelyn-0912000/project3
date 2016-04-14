@@ -8,7 +8,7 @@ namespace Meteen_Rotterdam
 {
     class Filter
     {
-        class Pair
+        public class Pair
         {
             string attribute { get; set; }
             string value { get; set; }
@@ -94,30 +94,25 @@ namespace Meteen_Rotterdam
 
             foreach (Pair pair in pairs)
             {
-                if (firstPair)
-                {
-                    query = query + '\n' + "WHERE ";
-                    firstPair = false;
-                } else
-                {
-                    query = query + '\n' + "AND ";
-                }
+                string component;
+                string filtration = "";
 
                 switch(pair.getAttribute())
                 {
                     case "mood":
-                        query = query + String.Format("o.mood = '{0}'", pair.getValue());
+                        filtration = String.Format("o.mood = '{0}'", pair.getValue());
                         break;
 
                     case "indoors":
                         if (Convert.ToBoolean(pair.getAttribute()) == true || Convert.ToBoolean(pair.getAttribute()) == false)
                         {
-                            query = query + String.Format("o.indoors = '{0})'", pair.getValue());
+                            filtration = String.Format("o.indoors = '{0})'", pair.getValue());
                         } else
                         {
                             throw new System.ArgumentException("Error, neither 'true' nor 'false' supplied.", "original");
                         }
                         break;
+
                     case "returnColumns":
                         if (Convert.ToBoolean(pair.getValue()))
                         {
@@ -129,8 +124,23 @@ namespace Meteen_Rotterdam
                     case "amount_max":
                     case "age_min":
                     case "age_max":
-                        query = query + String.Format("o.{0} = {1}", pair.getAttribute(), pair.getValue());
+                        filtration = String.Format("o.{0} = {1}", pair.getAttribute(), pair.getValue());
                         break;
+                }
+
+                if (firstPair)
+                {
+                    component = '\n' + "WHERE ";
+                    firstPair = false;
+                }
+                else
+                {
+                    component = '\n' + "AND ";
+                }
+
+                if (filtration != "")
+                {
+                    query = query + component + filtration;
                 }
             }
 

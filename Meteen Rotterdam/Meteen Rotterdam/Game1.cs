@@ -55,10 +55,7 @@ namespace Meteen_Rotterdam
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer2 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer3 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer4 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      
       // TODO: use this.Content to load your game content here
       List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
@@ -125,19 +122,6 @@ namespace Meteen_Rotterdam
         grabOffset = Vector2.Zero;
       }
       System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
-      pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
-      pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.934622, 4.506877)));
-      pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.913171, 4.493527)));
-      pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917683, 4.482327)));
-      
-      foreach(Map point in points)
-      {
-        Vector2 currentPos = point.printPosition();
-        Console.WriteLine(String.Format("x is {0} and y = {1}", currentPos.X, currentPos.Y));
-        Vector2 ultimatePos = map1.getMiddle() + map1.GetCoordinates(currentPos.X, currentPos.Y);
-        Console.WriteLine(String.Format("And in the end it is {0} and {1}", ultimatePos.X, ultimatePos.Y));
-        point.UpdateVirPos(map1.getMiddle() + point.GetCoordinates(currentPos.X, currentPos.Y));
-      }
     }
 
 		/// <summary>
@@ -149,16 +133,11 @@ namespace Meteen_Rotterdam
 			GraphicsDevice.Clear(Color.White);
       spriteBatch.Begin();
       //spriteBatch.Draw(map, new Vector2(0, 0), Color.White);
-      map1.Draw(spriteBatch);
-			pointer1.Draw(spriteBatch);
-      pointer2.Draw(spriteBatch);
-      pointer3.Draw(spriteBatch);
-      pointer4.Draw(spriteBatch);
-
+      map1.DrawMap(spriteBatch);
       // TODO: Add your drawing code here
       foreach (Map point in points)
       {
-        point.Draw(spriteBatch);
+        point.Draw(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
       }
 
       spriteBatch.End();

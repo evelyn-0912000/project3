@@ -8,7 +8,7 @@ namespace Meteen_Rotterdam
 	public interface Drawable {
 		void UpdatePos(Vector2 position);
         void UpdateVirPos(Vector2 virtualPosition);
-		void Draw(SpriteBatch spriteBatch);
+		void Draw(SpriteBatch spriteBatch, Vector2 position);
 		Vector2 printPosition();
 		Texture2D printTexture();
 		Vector2 getMiddle();
@@ -61,27 +61,22 @@ namespace Meteen_Rotterdam
     }
 
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, Vector2 position)
     {
-      if (virtualPosition.X == 0 && virtualPosition.Y == 0)
-      {
-        spriteBatch.Draw(texture, position, Color.White);
-      } else
-      {
-        spriteBatch.Draw(texture, virtualPosition, Color.White);
-      }
-      System.Console.WriteLine(GetCoordinates(51.907744, 4.498591));
-      System.Console.WriteLine(GetCoordinates(51.907883, 4.493516)); 
-      System.Console.WriteLine(GetCoordinates(51.913171, 4.493527));
-      System.Console.WriteLine(GetCoordinates(51.911503, 4.512609));
+      spriteBatch.Draw(texture, position, Color.White);
     }
 
-		//public Vector2 getMiddle() {
-		//	float x = (image.printTexture().Width / 2);
-		//	float y = (image.printTexture().Height / 2);
-		//	return new Vector2(x, y);
-		//}
-		public Vector2 getMiddle() {
+        public void DrawMap(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, this.position, Color.White);
+        }
+
+        //public Vector2 getMiddle() {
+        //	float x = (image.printTexture().Width / 2);
+        //	float y = (image.printTexture().Height / 2);
+        //	return new Vector2(x, y);
+        //}
+        public Vector2 getMiddle() {
 			float x = (this.position.X + this.texture.Width / 2);
 			float y = (this.position.Y + this.texture.Height / 2);
 			return new Vector2(x, y);

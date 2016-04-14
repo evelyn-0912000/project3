@@ -116,7 +116,7 @@ namespace Meteen_Rotterdam
       System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
       pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
       pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.934622, 4.506877)));
-      pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.913171, 4.493527)));
+      pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.916160, 4.605873)));
       pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917683, 4.482327)));
     }
 

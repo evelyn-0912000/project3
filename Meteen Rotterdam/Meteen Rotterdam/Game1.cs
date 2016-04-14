@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 
 namespace Meteen_Rotterdam
 {
@@ -20,6 +22,7 @@ namespace Meteen_Rotterdam
     private Map pointer2;
     private Map pointer3;
     private Map pointer4;
+    private List<Map> points = new List<Map>();
 
     public Game1()
     {
@@ -57,6 +60,14 @@ namespace Meteen_Rotterdam
       pointer3 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       pointer4 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       // TODO: use this.Content to load your game content here
+      List<List<string>> pointsFromDB = new List<List<string>>();
+      pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
+      foreach (List<string> row in pointsFromDB)
+      {
+        float lat = Convert.ToSingle(row[0]);
+        float lon = Convert.ToSingle(row[1]);
+        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
+      }
     }
 
 		/// <summary>
@@ -118,6 +129,15 @@ namespace Meteen_Rotterdam
       pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.934622, 4.506877)));
       pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.916160, 4.605873)));
       pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917683, 4.482327)));
+      
+      foreach(Map point in points)
+      {
+        Vector2 currentPos = point.printPosition();
+        Console.WriteLine(String.Format("x is {0} and y = {1}", currentPos.X, currentPos.Y));
+        Vector2 ultimatePos = map1.getMiddle() + map1.GetCoordinates(currentPos.X, currentPos.Y);
+        Console.WriteLine(String.Format("And in the end it is {0} and {1}", ultimatePos.X, ultimatePos.Y));
+        point.UpdateVirPos(map1.getMiddle() + point.GetCoordinates(currentPos.X, currentPos.Y));
+      }
     }
 
 		/// <summary>
@@ -134,10 +154,14 @@ namespace Meteen_Rotterdam
       pointer2.Draw(spriteBatch);
       pointer3.Draw(spriteBatch);
       pointer4.Draw(spriteBatch);
-      spriteBatch.End();
 
       // TODO: Add your drawing code here
+      foreach (Map point in points)
+      {
+        point.Draw(spriteBatch);
+      }
 
+      spriteBatch.End();
       base.Draw(gameTime);
 
       

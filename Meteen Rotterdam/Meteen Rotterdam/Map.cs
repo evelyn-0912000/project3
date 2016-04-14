@@ -2,11 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-
 namespace Meteen_Rotterdam
 {
 	public interface Drawable {
 		void UpdatePos(Vector2 position);
+        void UpdateVirPos(Vector2 virtualPosition);
 		void Draw(SpriteBatch spriteBatch);
 		Vector2 printPosition();
 		Texture2D printTexture();
@@ -18,18 +18,24 @@ namespace Meteen_Rotterdam
   {
     Texture2D texture;
     Vector2 position;
+    Vector2 virtualPosition;
     double centerLatitude = (51.921045);
     double centerLongitude = (4.493159);
    
     public Map(Vector2 position, Texture2D texture)
     {
       this.texture = texture;
-			this.position = position;
+        this.position = position;
+      this.virtualPosition = new Vector2(0,0); 
     }
 
     public void UpdatePos(Vector2 position)
     {
       this.position = position;
+    }
+    
+    public void UpdateVirPos(Vector2 virtualPosition) {
+      this.virtualPosition = virtualPosition;
     }
 
 		public Vector2 printPosition() {
@@ -56,7 +62,13 @@ namespace Meteen_Rotterdam
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(texture, position, Color.White);
+      if (virtualPosition.X == 0 && virtualPosition.Y == 0)
+      {
+        spriteBatch.Draw(texture, position, Color.White);
+      } else
+      {
+        spriteBatch.Draw(texture, virtualPosition, Color.White);
+      }
       System.Console.WriteLine(GetCoordinates(51.907744, 4.498591));
       System.Console.WriteLine(GetCoordinates(51.907883, 4.493516)); 
       System.Console.WriteLine(GetCoordinates(51.913171, 4.493527));

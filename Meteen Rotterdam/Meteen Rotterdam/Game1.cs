@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Meteen_Rotterdam;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace Meteen_Rotterdam
 {
-	// CONNECTIONSTRING -> <> "server=iksman.nl/phpmyadmin;uid=iksman_read;pwd=read1;database=iksman_php;"
 	/// <summary>
 	/// This is the main type for your game.
 	/// </summary>
@@ -24,14 +22,14 @@ namespace Meteen_Rotterdam
     private Map pointer2;
     private Map pointer3;
     private Map pointer4;
-		private List<Drawable> draws;
+    private List<Map> points = new List<Map>();
 
     public Game1()
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-			graphics.PreferredBackBufferHeight = 900;
-			graphics.PreferredBackBufferWidth = 1800;
+      graphics.PreferredBackBufferHeight = 720;
+      graphics.PreferredBackBufferWidth = 1280;
 		}
 
 		/// <summary>
@@ -57,11 +55,19 @@ namespace Meteen_Rotterdam
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-			var results = Filter.initialMap("server=149.210.163.28;userid=iksman_read;pwd=read1;database=iksman_php;");
-			//foreach (List<string> attraction in results) {
-			//	System.Console.WriteLine(attraction[0]);
-			//}
+			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      pointer2 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      pointer3 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+      pointer4 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
       // TODO: use this.Content to load your game content here
+      List<List<string>> pointsFromDB = new List<List<string>>();
+      pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
+      foreach (List<string> row in pointsFromDB)
+      {
+        float lat = Convert.ToSingle(row[0]);
+        float lon = Convert.ToSingle(row[1]);
+        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
+      }
     }
 
 		/// <summary>
@@ -120,9 +126,18 @@ namespace Meteen_Rotterdam
       }
       System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
       pointer1.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907744, 4.498591)));
-      pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.907883, 4.493516)));
+      pointer2.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.934622, 4.506877)));
       pointer3.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.913171, 4.493527)));
-      pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917724, 4.482567)));
+      pointer4.UpdatePos(map1.getMiddle() + (map1.GetCoordinates(51.917683, 4.482327)));
+      
+      foreach(Map point in points)
+      {
+        Vector2 currentPos = point.printPosition();
+        Console.WriteLine(String.Format("x is {0} and y = {1}", currentPos.X, currentPos.Y));
+        Vector2 ultimatePos = map1.getMiddle() + map1.GetCoordinates(currentPos.X, currentPos.Y);
+        Console.WriteLine(String.Format("And in the end it is {0} and {1}", ultimatePos.X, ultimatePos.Y));
+        point.UpdateVirPos(map1.getMiddle() + point.GetCoordinates(currentPos.X, currentPos.Y));
+      }
     }
 
 		/// <summary>
@@ -139,10 +154,14 @@ namespace Meteen_Rotterdam
       pointer2.Draw(spriteBatch);
       pointer3.Draw(spriteBatch);
       pointer4.Draw(spriteBatch);
-      spriteBatch.End();
 
       // TODO: Add your drawing code here
+      foreach (Map point in points)
+      {
+        point.Draw(spriteBatch);
+      }
 
+      spriteBatch.End();
       base.Draw(gameTime);
 
       

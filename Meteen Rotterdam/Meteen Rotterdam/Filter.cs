@@ -30,7 +30,7 @@ namespace Meteen_Rotterdam
             }
         }
 
-        List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
+        public static List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
         {
             try
             {
@@ -82,11 +82,11 @@ namespace Meteen_Rotterdam
             }
         }
 
-        List<List<string>> filterNodes(string connectionString, params Pair[] pairs)
+        static List<List<string>> filterNodes(string connectionString, params Pair[] pairs)
         {
             string query =  @"SELECT a.x, a.y
-                            FROM attractions AS a
-                            INNER JOIN occasions AS o
+                            FROM proj3_attractions AS a
+                            INNER JOIN proj3_occasions AS o
                             ON(o.occasion_name = a.occasion)";
 
             bool firstPair = true;
@@ -132,20 +132,20 @@ namespace Meteen_Rotterdam
             return results;
         }
 
-        List<List<string>> initialMap(string connectionString)
+        public static List<List<string>> initialMap(string connectionString)
         {
             string query = @"SELECT a.x, a.y
-                            FROM attractions AS a;";
+                            FROM proj3_attractions AS a;";
 
             List<List<string>> results = executeQuery(query, connectionString, 2);
 
             return results;
         }
 
-        List<string> identifyNode(string connectionString, double x, double y)
+        public static List<string> identifyNode(string connectionString, double x, double y)
         {
             string query =  @"SELECT a.name, a.postal
-                            FROM attractions as a
+                            FROM proj3_attractions as a
                             WHERE a.x = {0}
                             AND a.y = {1}";
 

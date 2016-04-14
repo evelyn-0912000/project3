@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Meteen_Rotterdam;
+using System.Collections.Generic;
+using System;
 
 namespace Meteen_Rotterdam
 {
+	// CONNECTIONSTRING -> <> "server=iksman.nl/phpmyadmin;uid=iksman_read;pwd=read1;database=iksman_php;"
 	/// <summary>
 	/// This is the main type for your game.
 	/// </summary>
@@ -20,11 +24,14 @@ namespace Meteen_Rotterdam
     private Map pointer2;
     private Map pointer3;
     private Map pointer4;
+		private List<Drawable> draws;
 
     public Game1()
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+			graphics.PreferredBackBufferHeight = 900;
+			graphics.PreferredBackBufferWidth = 1800;
 		}
 
 		/// <summary>
@@ -50,10 +57,10 @@ namespace Meteen_Rotterdam
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-			pointer1 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer2 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer3 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
-      pointer4 = new Map(map1.getMiddle(), Content.Load<Texture2D>("pointer.png"));
+			var results = Filter.initialMap("server=149.210.163.28;userid=iksman_read;pwd=read1;database=iksman_php;");
+			//foreach (List<string> attraction in results) {
+			//	System.Console.WriteLine(attraction[0]);
+			//}
       // TODO: use this.Content to load your game content here
     }
 

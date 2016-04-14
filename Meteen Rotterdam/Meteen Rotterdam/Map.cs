@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-
 namespace Meteen_Rotterdam
 {
 	public interface Drawable {

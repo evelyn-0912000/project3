@@ -18,18 +18,16 @@ namespace Meteen_Rotterdam
     private MouseState mouseState;
     private Vector2 mapPosition;
     private Map map1;
-		private Map pointer1;
-    private Map pointer2;
-    private Map pointer3;
-    private Map pointer4;
     private List<Map> points = new List<Map>();
-
-    public Game1()
+		private buttonOverlay overlay1;
+		
+    public Game1(int width, int height,bool fullsc)
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-      graphics.PreferredBackBufferHeight = 720;
-      graphics.PreferredBackBufferWidth = 1280;
+      graphics.PreferredBackBufferHeight = height;
+      graphics.PreferredBackBufferWidth = width;
+			graphics.IsFullScreen = fullsc;
 		}
 
 		/// <summary>
@@ -55,7 +53,7 @@ namespace Meteen_Rotterdam
 			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-      
+			overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
       // TODO: use this.Content to load your game content here
       List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
@@ -63,9 +61,14 @@ namespace Meteen_Rotterdam
       {
         float lat = Convert.ToSingle(row[0]);
         float lon = Convert.ToSingle(row[1]);
-        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
+        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
       }
-    }
+			foreach (List<string> row in pointsFromDB) {
+				float lat = Convert.ToSingle(row[0]);
+				float lon = Convert.ToSingle(row[1]);
+				points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
+			}
+		}
 
 		/// <summary>
 		/// UnloadContent will be called once per game and is the place to unload
@@ -97,22 +100,18 @@ namespace Meteen_Rotterdam
 
 			base.Update(gameTime);
       mouseState = Mouse.GetState();
-      
-
-      if (mouseState.LeftButton == ButtonState.Pressed)
-      {        
-        Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
-        if (grabOffset == Vector2.Zero)
-        {
-          grabOffset = new Vector2(map1.printPosition().X - mousePosition.X, map1.printPosition().Y - mousePosition.Y);
-        }
-        else
-        {
-          mapPosition = new Vector2(mousePosition.X + grabOffset.X, mousePosition.Y + grabOffset.Y);
-          map1.UpdatePos(mapPosition);
-        }
-        
-        System.Console.WriteLine("OFFSET" + grabOffset);
+			if (mouseState.LeftButton == ButtonState.Pressed) {
+				Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
+				if (overlay1.containsMouse(mousePosition) == false) {
+					if (grabOffset == Vector2.Zero) {
+						grabOffset = new Vector2(map1.printPosition().X - mousePosition.X, map1.printPosition().Y - mousePosition.Y);
+					}
+					else {
+						mapPosition = new Vector2(mousePosition.X + grabOffset.X, mousePosition.Y + grabOffset.Y);
+						map1.UpdatePos(mapPosition);
+					}
+				}
+        //System.Console.WriteLine("OFFSET" + grabOffset);
         //System.Console.WriteLine("MOUSE" + mousePosition);
         //System.Console.WriteLine("MAP" + mapPosition);
         
@@ -137,9 +136,9 @@ namespace Meteen_Rotterdam
       // TODO: Add your drawing code here
       foreach (Map point in points)
       {
-        point.Draw(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
+        point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
       }
-
+			overlay1.Draw(spriteBatch);
       spriteBatch.End();
       base.Draw(gameTime);
 

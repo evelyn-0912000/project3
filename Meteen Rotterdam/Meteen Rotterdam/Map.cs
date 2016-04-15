@@ -6,7 +6,6 @@ namespace Meteen_Rotterdam
 {
 	public interface Drawable {
 		void UpdatePos(Vector2 position);
-        void UpdateVirPos(Vector2 virtualPosition);
 		void Draw(SpriteBatch spriteBatch, Vector2 position);
 		Vector2 printPosition();
 		Texture2D printTexture();
@@ -65,20 +64,66 @@ namespace Meteen_Rotterdam
       spriteBatch.Draw(texture, position, Color.White);
     }
 
-        public void DrawMap(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(texture, this.position, Color.White);
-        }
+    public void DrawMap(SpriteBatch spriteBatch)
+    {
+      spriteBatch.Draw(texture, this.position, Color.White);
+    }
+
+		public void DrawPinstyle(SpriteBatch spriteBatch, Vector2 position) {
+			float adjustedx = position.X - (texture.Width / 2);
+			float adjustedy = position.Y - texture.Height;
+			spriteBatch.Draw(texture, new Vector2(adjustedx, adjustedy));
+		}
 
         //public Vector2 getMiddle() {
         //	float x = (image.printTexture().Width / 2);
         //	float y = (image.printTexture().Height / 2);
         //	return new Vector2(x, y);
         //}
-        public Vector2 getMiddle() {
+    public Vector2 getMiddle() {
 			float x = (this.position.X + this.texture.Width / 2);
 			float y = (this.position.Y + this.texture.Height / 2);
 			return new Vector2(x, y);
-			}
+		}
   }
+	public class buttonOverlay {
+		Texture2D texture;
+		Color[] color;
+		Vector2 pos;
+		int width;
+		int height;
+		public buttonOverlay(bool right, GraphicsDeviceManager graphics, Color additionalColor) {
+			width = 270;
+			height = graphics.PreferredBackBufferHeight;
+			this.texture = new Texture2D(graphics.GraphicsDevice, width , height);
+			color = new Color[width * height];
+			for (int i = 0; i < color.Length; i++) {
+				if (i % width == 0 || i % width == 1) {
+					color[i] = Color.Black;
+				}
+				else {
+					color[i] = additionalColor;
+				}
+			}
+			this.texture.SetData(color);
+
+			if (right == true) {
+				this.pos = new Vector2((graphics.PreferredBackBufferWidth - width), 0);
+			}	else {
+				this.pos = new Vector2(0, 0);
+			}
+		}
+		public void Draw(SpriteBatch spriteBatch) {
+			spriteBatch.Draw(texture, pos, Color.White);
+		}
+		public bool containsMouse (Vector2 mousePos) {
+			Rectangle area = new Rectangle((int) pos.X,(int) pos.Y,(int) pos.X + width, (int) pos.Y + height);
+			if (area.Contains(mousePos)){
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
 }

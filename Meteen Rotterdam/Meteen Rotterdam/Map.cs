@@ -90,19 +90,26 @@ namespace Meteen_Rotterdam
 		Texture2D texture;
 		Color[] color;
 		Vector2 pos;
-		int width;
-		int height;
+		public int width;
+		public int height;
+		public bool rightstatus;
 		public buttonOverlay(bool right, GraphicsDeviceManager graphics, Color additionalColor) {
-			width = 270;
+			rightstatus = right;
+			width = 300;
 			height = graphics.PreferredBackBufferHeight;
 			this.texture = new Texture2D(graphics.GraphicsDevice, width , height);
 			color = new Color[width * height];
 			for (int i = 0; i < color.Length; i++) {
-				if (i % width == 0 || i % width == 1) {
+				if (i % width == 0) {
+					color[i] = new Color(0, 0, 0, 25);
+				}else if (i % width == 1) {
+					color[i] = new Color(0, 0, 0, 75);
+				}
+				else if (i % width == 2) {
 					color[i] = Color.Black;
 				}
 				else {
-					color[i] = additionalColor;
+					color[i] = new Color(100,100,100,245);
 				}
 			}
 			this.texture.SetData(color);
@@ -116,6 +123,7 @@ namespace Meteen_Rotterdam
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
+
 		public bool containsMouse (Vector2 mousePos) {
 			Rectangle area = new Rectangle((int) pos.X,(int) pos.Y,(int) pos.X + width, (int) pos.Y + height);
 			if (area.Contains(mousePos)){

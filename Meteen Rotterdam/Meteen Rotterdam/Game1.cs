@@ -9,6 +9,8 @@ namespace Meteen_Rotterdam
 	/// <summary>
 	/// This is the main type for your game.
 	/// </summary>
+	
+	
 	public class Game1 : Game
   {
 		GraphicsDeviceManager graphics;
@@ -20,8 +22,11 @@ namespace Meteen_Rotterdam
     private Map map1;
     private List<Map> points = new List<Map>();
 		private buttonOverlay overlay1;
-		
-    public Game1(int width, int height,bool fullsc)
+		private PersonsButton button1;
+		private ApplyButton button2;
+		private List<IButton> buttons = new List<IButton>();
+
+		public Game1(int width, int height,bool fullsc)
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -54,8 +59,13 @@ namespace Meteen_Rotterdam
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
 			overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
-      // TODO: use this.Content to load your game content here
-      List<List<string>> pointsFromDB = new List<List<string>>();
+			buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
+			buttons.Add(new ApplyButton(overlay1, graphics, Color.Red));
+			buttons.Add(new MoodButton(overlay1, graphics, Color.Green));
+			buttons.Add(new OutsideButton(overlay1, graphics, Color.Purple));
+			buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
+			// TODO: use this.Content to load your game content here
+			List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
       foreach (List<string> row in pointsFromDB)
       {
@@ -63,11 +73,6 @@ namespace Meteen_Rotterdam
         float lon = Convert.ToSingle(row[1]);
         points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
       }
-			foreach (List<string> row in pointsFromDB) {
-				float lat = Convert.ToSingle(row[0]);
-				float lon = Convert.ToSingle(row[1]);
-				points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pointer.png")));
-			}
 		}
 
 		/// <summary>
@@ -120,7 +125,7 @@ namespace Meteen_Rotterdam
       {
         grabOffset = Vector2.Zero;
       }
-      System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
+      //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
 
 		/// <summary>
@@ -139,6 +144,9 @@ namespace Meteen_Rotterdam
         point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
       }
 			overlay1.Draw(spriteBatch);
+			foreach(IButton button in buttons) {
+				button.Draw(spriteBatch);
+			}
       spriteBatch.End();
       base.Draw(gameTime);
 

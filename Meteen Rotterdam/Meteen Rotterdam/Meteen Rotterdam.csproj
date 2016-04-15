@@ -41,6 +41,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Button.cs" />
     <Compile Include="Fetcher.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Game1.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Marker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rectangler.cs" />
     <Compile Include="Statics.cs" />
   </ItemGroup>
   <ItemGroup>

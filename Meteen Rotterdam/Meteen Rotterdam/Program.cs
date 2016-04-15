@@ -17,11 +17,11 @@ namespace Meteen_Rotterdam {
         [STAThread]
         static void Main()
         {
-			using (var game = new Game1(1280, 720, false))
+					using (var game = new Game1(1920, 1080, true))
 				
-				game.Run();
+						game.Run();
 								
-        }
+						}
     }
 #endif
 }

@@ -8,7 +8,7 @@ namespace Meteen_Rotterdam
 {
     class Filter
     {
-        static List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
+        public static List<List<string>> executeQuery(string query, string connectionString, int columnAmount, bool returnColumns=false)
         {
             try
             {
@@ -140,7 +140,12 @@ namespace Meteen_Rotterdam
             return results;
         }
 
-        List<string> identifyNode(string connectionString, double x, double y, bool returnColumns=false)
+        public static List<List<string>> simpleExecuteQuery(string query, string connectionString) {
+          List<List<string>> results = executeQuery(query, connectionString, 2);
+          return results;
+        }
+
+    List<string> identifyNode(string connectionString, double x, double y, bool returnColumns=false)
         {
             string query =  @"SELECT a.name, a.postal
                             FROM attractions as a

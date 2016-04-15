@@ -8,17 +8,18 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Meteen_Rotterdam {
 	public interface IButton {
-		void click();
 		bool checkMouse(MouseState mouseState);
-		void Update(MouseState mouseState);
+		void Update(MouseState mousestate, MouseState oldmousestate);
 		void Draw(SpriteBatch spriteBatch);
-	}
+    string printValue();
+  }
+
 	class PersonsButton : IButton {
 		public int persons;
 		public Vector2 pos;
 		private Texture2D texture;
 		public PersonsButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
-			persons = 1;
+			persons = 0;
 			float posx;
 			float posy;
 			texture = Rectangler.makeRect(95, 95, color, graphics);
@@ -33,23 +34,41 @@ namespace Meteen_Rotterdam {
 		}
 
 		public bool checkMouse(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
+      Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+      if (area.Contains(mouseState.Position)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
 
 		public void click() {
-			throw new NotImplementedException();
+      persons++;
+      if (persons == 13) {
+        persons = 0;
+      }
+      Console.WriteLine("Persons: " + persons.ToString());
 		}
 
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
 
-		public void Update(MouseState mousestate) {
-			
-		}
+    public string printValue() {
+      return persons.ToString();
+    }
+
+    public void Update(MouseState mousestate, MouseState oldmousestate) {
+      if (checkMouse(mousestate)) {
+        if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+          click();
+        }
+      }
+    }
 	}
 
-	class ApplyButton : IButton {
+	class ApplyButton {
 		public Vector2 pos;
 		private Texture2D texture;
 
@@ -68,7 +87,7 @@ namespace Meteen_Rotterdam {
 		}
 
 		public bool checkMouse(MouseState mouseState) {
-			Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)pos.X + texture.Width, (int)pos.Y + texture.Height);
+			Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
 			if (area.Contains(mouseState.Position)) {
 				return true;
 			}
@@ -76,24 +95,87 @@ namespace Meteen_Rotterdam {
 				return false;
 			}
 		}
-
-		public void click() {
-			throw new NotImplementedException();
-		}
-
+    public Tuple<bool, string> click(List<IButton> list) { // Tuple<bool,string>
+      List<string> results = new List<string>();
+      List<IButton> valueButtons = new List<IButton>();
+      foreach (IButton button in list) {
+        results.Add(button.printValue());
+      }
+      ///<remarks>
+      /// results[0] is Persons -> IfEmpty it is 0
+      /// results[1] is Mood -> IfEmpty it is None
+      /// results[2] is Outside -> IfEmpty it is 2
+      /// results[3] is Age -> IfEmpty it is 0
+      /// </remarks>
+      string query = "SELECT a.x, a.y FROM attractions AS a INNER JOIN occasions AS o ON(o.occasion_name = a.occasion)";
+      bool firstItem = true;
+      if (results[0] != "0") {
+        firstItem = false;
+        query += " WHERE o.amount_min >= " + results[0] + " AND o.amount_max <= " + results[0];
+      }
+      if (results[1] != "None") {
+        if (firstItem) {
+          query += " WHERE ";
+          firstItem = false;
+        }
+        else {
+          query += " AND ";
+        }
+        query += "o.mood = '" + results[1] + "'";
+      }
+      if (results[2] != "2") {
+        if (firstItem) {
+          query += " WHERE ";
+          firstItem = false;
+        }
+        else {
+          query += " AND ";
+        }
+        query += "o.indoors = " + results[2];
+      }
+      if (results[3] != "0") {
+        if (firstItem) {
+          query += " WHERE ";
+          firstItem = false;
+        }
+        else {
+          query += " AND ";
+        }
+        query += "o.age_min >= " + results[3] + " AND o.age_max <= " + results[3];
+      }
+      return new Tuple<bool,string>(true,query);
+    }
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
 
-		public void Update(MouseState mouseState) {
-			
-		}
-	}
+    public string printValue() {
+      return null;
+    }
+
+    public Tuple<bool, string> Update(MouseState mousestate, MouseState oldmousestate, List<IButton> list) {
+      if (checkMouse(mousestate)) {
+        if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+          return click(list);
+        }
+        else {
+          return new Tuple<bool, string>(false, "");
+        }
+      }
+      else {
+        return new Tuple<bool, string>(false, "");
+      }
+    }
+  }
 
 	class MoodButton : IButton {
+    public int mood;
+    public string moodname;
 		public Vector2 pos;
 		private Texture2D texture;
 		public MoodButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+      mood = 0;
+      moodname = "None";
 			float posx;
 			float posy;
 			texture = Rectangler.makeRect(95, 95, color, graphics);
@@ -109,28 +191,58 @@ namespace Meteen_Rotterdam {
 
 
 		public bool checkMouse(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
-
-		
-
+      Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+      if (area.Contains(mouseState.Position)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    
 		public void click() {
-			throw new NotImplementedException();
+      mood++;
+      if (mood == 5) {
+        mood = 0;
+      }
+      if (mood == 0){
+        moodname = "None";
+      }else if (mood == 1) {
+        moodname = "relaxation";
+      }else if (mood == 2) {
+        moodname = "education";
+      }else if (mood == 3) {
+        moodname = "commerce";
+      }else if (mood == 4) {
+        moodname = "sport";
+      }
+      Console.WriteLine("Mood: " + mood.ToString() + ". " + moodname);
 		}
 
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
 
-		public void Update(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
-	}
+    public string printValue() {
+      Console.WriteLine(moodname);
+      return moodname;
+    }
+
+    public void Update(MouseState mousestate, MouseState oldmousestate) {
+      if (checkMouse(mousestate)) {
+        if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+          click();
+        }
+      }
+    }
+  }
 
 	class AgeButton : IButton {
+    public int age;
 		public Vector2 pos;
 		private Texture2D texture;
 		public AgeButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+      age = 0;
 			float posx;
 			float posy;
 			texture = Rectangler.makeRect(95, 95, color, graphics);
@@ -145,29 +257,48 @@ namespace Meteen_Rotterdam {
 		}
 
 		public bool checkMouse(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
+      Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+      if (area.Contains(mouseState.Position)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
 
 		public void click() {
-			throw new NotImplementedException();
+      age += 5;
+      if (age == 85) {
+        age = 0;
+      }
+      Console.WriteLine("Age: " + age.ToString());
 		}
 
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
+    public string printValue() {
+      return age.ToString();
+    }
 
-		public void Update(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
-	}
+    public void Update(MouseState mousestate, MouseState oldmousestate) {
+      if (checkMouse(mousestate)) {
+        if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+          click();
+        }
+      }
+    }
+  }
 
-	class OutsideButton : IButton {
+	class OutsideButton : IButton { //IS ACTUALLY AN INSIDE BUTTON
+    public int inside;
 		public Vector2 pos;
 		private Texture2D texture;
 
 		public OutsideButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
 			float posx;
 			float posy;
+      inside = 2;
 			texture = Rectangler.makeRect(95, 95, color, graphics);
 			if (overlay.rightstatus == true) {
 				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
@@ -180,19 +311,37 @@ namespace Meteen_Rotterdam {
 		}
 
 		public bool checkMouse(MouseState mouseState) {
-			throw new NotImplementedException();
-		}
+      Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+      if (area.Contains(mouseState.Position)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
 
 		public void click() {
-			throw new NotImplementedException();
+      inside++;
+      if (inside == 3) {
+        inside = 0;
+      }
+      Console.WriteLine("Inside: " + inside.ToString());
 		}
 
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
 
-		public void Update(MouseState mouseState) {
-			
-		}
-	}
+    public string printValue() {
+      return inside.ToString();
+    }
+
+    public void Update(MouseState mousestate, MouseState oldmousestate) {
+      if (checkMouse(mousestate)) {
+        if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+          click();
+        }
+      }
+    }
+  }
 }

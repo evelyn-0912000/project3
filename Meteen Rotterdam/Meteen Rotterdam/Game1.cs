@@ -18,12 +18,12 @@ namespace Meteen_Rotterdam
     private Texture2D mapimg;
     private Vector2 grabOffset;
     private MouseState mouseState;
+    private MouseState oldMouseState;
     private Vector2 mapPosition;
     private Map map1;
     private List<Map> points = new List<Map>();
 		private buttonOverlay overlay1;
-		private PersonsButton button1;
-		private ApplyButton button2;
+		private ApplyButton applyButton;
 		private List<IButton> buttons = new List<IButton>();
 
 		public Game1(int width, int height,bool fullsc)
@@ -54,18 +54,18 @@ namespace Meteen_Rotterdam
 		/// </summary>
 		protected override void LoadContent()
     {
-			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
-      mapimg = Content.Load<Texture2D>("map.gif");
-      map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-			overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
-			buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
-			buttons.Add(new ApplyButton(overlay1, graphics, Color.Red));
-			buttons.Add(new MoodButton(overlay1, graphics, Color.Green));
-			buttons.Add(new OutsideButton(overlay1, graphics, Color.Purple));
-			buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
-			// TODO: use this.Content to load your game content here
-			List<List<string>> pointsFromDB = new List<List<string>>();
+	    // Create a new SpriteBatch, which can be used to draw textures.
+	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
+        mapimg = Content.Load<Texture2D>("map.gif");
+        map1 = new Map(GetCenter(mapimg, graphics), mapimg);
+	    overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
+	    buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
+	    applyButton = new ApplyButton(overlay1, graphics, Color.Red);
+	    buttons.Add(new MoodButton(overlay1, graphics, Color.Green));
+	    buttons.Add(new OutsideButton(overlay1, graphics, Color.Purple));
+	    buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
+	    // TODO: use this.Content to load your game content here
+	    List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
       foreach (List<string> row in pointsFromDB)
       {
@@ -104,6 +104,7 @@ namespace Meteen_Rotterdam
 			// TODO: Add your update logic here
 
 			base.Update(gameTime);
+      oldMouseState = mouseState;
       mouseState = Mouse.GetState();
 			if (mouseState.LeftButton == ButtonState.Pressed) {
 				Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
@@ -124,6 +125,20 @@ namespace Meteen_Rotterdam
       if (mouseState.LeftButton == ButtonState.Released)
       {
         grabOffset = Vector2.Zero;
+      }
+
+      foreach (IButton button in buttons) {
+        button.Update(mouseState, oldMouseState);
+      }
+      Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
+      if (applyResult.Item1) {
+        points.Clear();
+        var pointsFromDB = Filter.simpleExecuteQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
+        foreach (List<string> row in pointsFromDB) {
+          float lat = Convert.ToSingle(row[0]);
+          float lon = Convert.ToSingle(row[1]);
+          points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
+        }
       }
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
@@ -147,6 +162,7 @@ namespace Meteen_Rotterdam
 			foreach(IButton button in buttons) {
 				button.Draw(spriteBatch);
 			}
+      applyButton.Draw(spriteBatch);
       spriteBatch.End();
       base.Draw(gameTime);
 

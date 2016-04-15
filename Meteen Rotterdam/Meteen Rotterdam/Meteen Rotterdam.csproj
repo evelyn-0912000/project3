@@ -41,6 +41,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Abstraction.cs" />
     <Compile Include="Fetcher.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Game1.cs" />

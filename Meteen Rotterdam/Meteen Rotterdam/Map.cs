@@ -10,7 +10,6 @@ namespace Meteen_Rotterdam
 		Vector2 printPosition();
 		Texture2D printTexture();
 		Vector2 getMiddle();
-    
 	}
 
   public class Map : Drawable
@@ -20,12 +19,15 @@ namespace Meteen_Rotterdam
     Vector2 virtualPosition;
     double centerLatitude = (51.921045);
     double centerLongitude = (4.493159);
+    public int weight { get; set; }
+    public int abstraction { get; set; }
    
-    public Map(Vector2 position, Texture2D texture)
+    public Map(Vector2 position, Texture2D texture, int weight=1, int abstraction=1)
     {
       this.texture = texture;
-        this.position = position;
-      this.virtualPosition = new Vector2(0,0); 
+      this.position = position;
+      this.weight = weight;
+      this.abstraction = abstraction;
     }
 
     public void UpdatePos(Vector2 position)
@@ -33,7 +35,17 @@ namespace Meteen_Rotterdam
       this.position = position;
     }
     
-    public void UpdateVirPos(Vector2 virtualPosition) {
+    public void incrementWeight()
+    {
+      this.weight += 1;
+    }
+
+    public void incrementAbstraction()
+    {
+      this.abstraction += 1;
+    }
+
+        public void UpdateVirPos(Vector2 virtualPosition) {
       this.virtualPosition = virtualPosition;
     }
 

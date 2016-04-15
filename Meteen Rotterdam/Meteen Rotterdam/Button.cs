@@ -111,7 +111,7 @@ namespace Meteen_Rotterdam {
       bool firstItem = true;
       if (results[0] != "0") {
         firstItem = false;
-        query += " WHERE o.amount_min >= " + results[0] + " AND o.amount_max <= " + results[0];
+        query += " WHERE o.amount_min <= " + results[0] + " AND o.amount_max >= " + results[0];
       }
       if (results[1] != "None") {
         if (firstItem) {
@@ -141,7 +141,7 @@ namespace Meteen_Rotterdam {
         else {
           query += " AND ";
         }
-        query += "o.age_min >= " + results[3] + " AND o.age_max <= " + results[3];
+        query += "o.age_min <= " + results[3] + " AND o.age_max >= " + results[3];
       }
       return new Tuple<bool,string>(true,query);
     }

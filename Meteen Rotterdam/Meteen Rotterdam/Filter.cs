@@ -140,11 +140,6 @@ namespace Meteen_Rotterdam
             return results;
         }
 
-        public static List<List<string>> simpleExecuteQuery(string query, string connectionString) {
-          List<List<string>> results = executeQuery(query, connectionString, 2);
-          return results;
-        }
-
     List<string> identifyNode(string connectionString, double x, double y, bool returnColumns=false)
         {
             string query =  @"SELECT a.name, a.postal

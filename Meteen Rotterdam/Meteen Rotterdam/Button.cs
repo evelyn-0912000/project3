@@ -13,7 +13,6 @@ namespace Meteen_Rotterdam {
 		void Draw(SpriteBatch spriteBatch);
     string printValue();
   }
-
 	class PersonsButton : IButton {
 		public int persons;
 		public Vector2 pos;
@@ -32,7 +31,6 @@ namespace Meteen_Rotterdam {
 			posy = (Game1.GetCenter(texture, graphics).Y + 20);
 			pos = new Vector2(posx, posy);
 		}
-
 		public bool checkMouse(MouseState mouseState) {
       Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
       if (area.Contains(mouseState.Position)) {
@@ -42,7 +40,6 @@ namespace Meteen_Rotterdam {
         return false;
       }
     }
-
 		public void click() {
       persons++;
       if (persons == 13) {
@@ -50,15 +47,12 @@ namespace Meteen_Rotterdam {
       }
       Console.WriteLine("Persons: " + persons.ToString());
 		}
-
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
-
     public string printValue() {
       return persons.ToString();
     }
-
     public void Update(MouseState mousestate, MouseState oldmousestate) {
       if (checkMouse(mousestate)) {
         if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
@@ -67,7 +61,6 @@ namespace Meteen_Rotterdam {
       }
     }
 	}
-
 	class ApplyButton {
 		public Vector2 pos;
 		private Texture2D texture;
@@ -148,11 +141,9 @@ namespace Meteen_Rotterdam {
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
-
     public string printValue() {
       return null;
     }
-
     public Tuple<bool, string> Update(MouseState mousestate, MouseState oldmousestate, List<IButton> list) {
       if (checkMouse(mousestate)) {
         if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
@@ -167,7 +158,6 @@ namespace Meteen_Rotterdam {
       }
     }
   }
-
 	class MoodButton : IButton {
     public int mood;
     public string moodname;
@@ -188,8 +178,6 @@ namespace Meteen_Rotterdam {
 			posy = (Game1.GetCenter(texture, graphics).Y + 20);
 			pos = new Vector2(posx, posy);
 		}
-
-
 		public bool checkMouse(MouseState mouseState) {
       Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
       if (area.Contains(mouseState.Position)) {
@@ -198,8 +186,7 @@ namespace Meteen_Rotterdam {
       else {
         return false;
       }
-    }
-    
+    }    
 		public void click() {
       mood++;
       if (mood == 5) {
@@ -218,16 +205,12 @@ namespace Meteen_Rotterdam {
       }
       Console.WriteLine("Mood: " + mood.ToString() + ". " + moodname);
 		}
-
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
-
     public string printValue() {
-      Console.WriteLine(moodname);
       return moodname;
     }
-
     public void Update(MouseState mousestate, MouseState oldmousestate) {
       if (checkMouse(mousestate)) {
         if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
@@ -236,7 +219,6 @@ namespace Meteen_Rotterdam {
       }
     }
   }
-
 	class AgeButton : IButton {
     public int age;
 		public Vector2 pos;
@@ -255,7 +237,6 @@ namespace Meteen_Rotterdam {
 			posy = (Game1.GetCenter(texture, graphics).Y -85);
 			pos = new Vector2(posx, posy);
 		}
-
 		public bool checkMouse(MouseState mouseState) {
       Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
       if (area.Contains(mouseState.Position)) {
@@ -265,7 +246,6 @@ namespace Meteen_Rotterdam {
         return false;
       }
     }
-
 		public void click() {
       age += 5;
       if (age == 85) {
@@ -273,14 +253,12 @@ namespace Meteen_Rotterdam {
       }
       Console.WriteLine("Age: " + age.ToString());
 		}
-
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
     public string printValue() {
       return age.ToString();
     }
-
     public void Update(MouseState mousestate, MouseState oldmousestate) {
       if (checkMouse(mousestate)) {
         if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
@@ -289,7 +267,6 @@ namespace Meteen_Rotterdam {
       }
     }
   }
-
 	class OutsideButton : IButton { //IS ACTUALLY AN INSIDE BUTTON
     public int inside;
 		public Vector2 pos;
@@ -319,7 +296,6 @@ namespace Meteen_Rotterdam {
         return false;
       }
     }
-
 		public void click() {
       inside++;
       if (inside == 3) {
@@ -327,15 +303,12 @@ namespace Meteen_Rotterdam {
       }
       Console.WriteLine("Inside: " + inside.ToString());
 		}
-
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
-
     public string printValue() {
       return inside.ToString();
     }
-
     public void Update(MouseState mousestate, MouseState oldmousestate) {
       if (checkMouse(mousestate)) {
         if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {

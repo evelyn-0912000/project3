@@ -54,10 +54,11 @@ namespace Meteen_Rotterdam
 		/// </summary>
 		protected override void LoadContent()
     {
-	    // Create a new SpriteBatch, which can be used to draw textures.
+      // Create a new SpriteBatch, which can be used to draw textures.
+      Console.WriteLine("BUTTONS\nPurple\t...\tToggle Inside -> 2 is Empty\nYellow\t...\tAdd to Age -> 0 is Empty\nBlue\t...\tAdd to Persons -> 0 is Empty\nGreen\t...\tSwitch moods -> 0 or None is Empty\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
-        mapimg = Content.Load<Texture2D>("map.gif");
-        map1 = new Map(GetCenter(mapimg, graphics), mapimg);
+      mapimg = Content.Load<Texture2D>("map.gif");
+      map1 = new Map(GetCenter(mapimg, graphics), mapimg);
 	    overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
 	    buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
 	    applyButton = new ApplyButton(overlay1, graphics, Color.Red);
@@ -133,7 +134,7 @@ namespace Meteen_Rotterdam
       Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
       if (applyResult.Item1) {
         points.Clear();
-        var pointsFromDB = Filter.simpleExecuteQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
+        var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",2);
         foreach (List<string> row in pointsFromDB) {
           float lat = Convert.ToSingle(row[0]);
           float lon = Convert.ToSingle(row[1]);

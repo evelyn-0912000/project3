@@ -10,7 +10,6 @@ namespace Meteen_Rotterdam
 	/// This is the main type for your game.
 	/// </summary>
 	
-	
 	public class Game1 : Game
   {
 		GraphicsDeviceManager graphics;
@@ -30,6 +29,7 @@ namespace Meteen_Rotterdam
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+			var content = Content;
       graphics.PreferredBackBufferHeight = height;
       graphics.PreferredBackBufferWidth = width;
 			graphics.IsFullScreen = fullsc;
@@ -60,10 +60,10 @@ namespace Meteen_Rotterdam
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
 	    overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
-	    buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
+	    buttons.Add(new PersonsButton(overlay1, graphics, Content));
 	    applyButton = new ApplyButton(overlay1, graphics, Color.Red);
-	    buttons.Add(new MoodButton(overlay1, graphics, Color.Green));
-	    buttons.Add(new OutsideButton(overlay1, graphics, Color.Purple));
+	    buttons.Add(new MoodButton(overlay1, graphics, Content));
+	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
 	    buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
 	    // TODO: use this.Content to load your game content here
 	    List<List<string>> pointsFromDB = new List<List<string>>();
@@ -163,7 +163,7 @@ namespace Meteen_Rotterdam
 			foreach(IButton button in buttons) {
 				button.Draw(spriteBatch);
 			}
-      applyButton.Draw(spriteBatch);
+      applyButton.Draw(spriteBatch, mouseState);
       spriteBatch.End();
       base.Draw(gameTime);
 

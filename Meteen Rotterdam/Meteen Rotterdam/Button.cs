@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace Meteen_Rotterdam {
 	public interface IButton {
@@ -18,12 +19,12 @@ namespace Meteen_Rotterdam {
 		public Vector2 pos;
 		private Texture2D texture;
     private bool max;
-		public PersonsButton(bool max, buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+    private List<Texture2D> textureList = new List<Texture2D>();
+		public PersonsButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) { 
       this.max = max;
 			persons = 0;
 			float posx;
 			float posy;
-			texture = Rectangler.makeRect(95, 95, color, graphics);
       if (overlay.rightstatus == true) {
         if (max) {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
@@ -64,6 +65,8 @@ namespace Meteen_Rotterdam {
         Console.WriteLine("Min persons: " + persons.ToString());
       }      
 		}
+			texture = textureList[persons];
+		}
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
@@ -84,12 +87,17 @@ namespace Meteen_Rotterdam {
     public string moodname;
 		public Vector2 pos;
 		private Texture2D texture;
-		public MoodButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+		private List<Texture2D> textureList = new List<Texture2D>();
+		public MoodButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
       mood = 0;
       moodname = "None";
 			float posx;
 			float posy;
-			texture = Rectangler.makeRect(95, 95, color, graphics);
+			
+			for (int i = 0; i < 5; i++) {
+				textureList.Add(content.Load<Texture2D>("buttons/mood" + i.ToString() + ".png"));
+			}
+			texture = textureList[mood];
 			if (overlay.rightstatus == true) {
 				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
 			}
@@ -124,6 +132,7 @@ namespace Meteen_Rotterdam {
       }else if (mood == 4) {
         moodname = "sport";
       }
+			texture = textureList[mood];
       Console.WriteLine("Mood: " + mood.ToString() + ". " + moodname);
 		}
 		public void Draw(SpriteBatch spriteBatch) {
@@ -211,19 +220,22 @@ namespace Meteen_Rotterdam {
     public int inside;
 		public Vector2 pos;
 		private Texture2D texture;
-
-		public OutsideButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+		private List<Texture2D> textureList = new List<Texture2D>();
+		public OutsideButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
 			float posx;
 			float posy;
       inside = 2;
-			texture = Rectangler.makeRect(95, 95, color, graphics);
-      if (overlay.rightstatus == true) {
-        posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
-      }
-      else {
-        posx = 50;
-      }
-      posy = (Game1.GetCenter(texture, graphics).Y + 20);
+			for (int i = 0; i < 3; i++) {
+				textureList.Add(content.Load<Texture2D>("buttons/inside" + i.ToString() + ".png"));
+			}
+			texture = textureList[inside];
+			if (overlay.rightstatus == true) {
+				posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
+			}
+			else {
+				posx = 50;
+			}
+			posy = (Game1.GetCenter(texture, graphics).Y - 85);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -240,6 +252,7 @@ namespace Meteen_Rotterdam {
       if (inside == 3) {
         inside = 0;
       }
+			texture = textureList[inside];
       Console.WriteLine("Inside: " + inside.ToString());
 		}
 		public void Draw(SpriteBatch spriteBatch) {

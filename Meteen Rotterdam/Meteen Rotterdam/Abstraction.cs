@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Meteen_Rotterdam;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace Meteen_Rotterdam
 {
@@ -13,6 +14,7 @@ namespace Meteen_Rotterdam
         List<Tuple<Map, Map>> produceClosestTuples(List<Map> nodes)
         {
             List<Tuple<Map, Map>> closestTuples = new List<Tuple<Map, Map>>();
+            List<Map> skippableNodes = new List<Map>();
 
             foreach (Map focusNode in nodes)
             {
@@ -21,7 +23,7 @@ namespace Meteen_Rotterdam
 
                 foreach (Map otherNode in nodes)
                 {
-                    if (focusNode.printPosition() != otherNode.printPosition())
+                    if (focusNode.printPosition() != otherNode.printPosition() && skippableNodes.Contains(otherNode))
                     {
                         Vector2 vectorDifference = Vector2.Subtract(focusNode.printPosition(), otherNode.printPosition());
                         double distance = Math.Sqrt(vectorDifference.X * vectorDifference.X + vectorDifference.Y * vectorDifference.Y);
@@ -39,14 +41,14 @@ namespace Meteen_Rotterdam
 
                 if (closestNode.printPosition() != focusNode.printPosition())
                 {
-                    nodes.Remove(closestNode);
+                    skippableNodes.Add(closestNode);
                 }
             }
 
             return closestTuples;
         }
 
-        Map createAbstractedNode(Map node1, Map node2)
+        Map createAbstractedNode(Map node1, Map node2, ContentManager Content)
         {
             Vector2 positionOne = node1.printPosition();
             Vector2 positionTwo = node2.printPosition();
@@ -66,14 +68,14 @@ namespace Meteen_Rotterdam
             return abstractedNode;
         }
 
-        List<Map> createAbstractedMap(List<Map> nodes)
+        List<Map> createAbstractedMap(List<Map> nodes, ContentManager Content)
         {
             List<Tuple<Map, Map>> closestTuples = produceClosestTuples(nodes);
             List<Map> abstractedMap = new List<Map>();
 
             foreach (Tuple<Map, Map> closestTuple in closestTuples)
             {
-                Map abstractedNode = createAbstractedNode(closestTuple.Item1, closestTuple.Item2);
+                Map abstractedNode = createAbstractedNode(closestTuple.Item1, closestTuple.Item2, Content);
                 abstractedMap.Add(abstractedNode);
             }
 

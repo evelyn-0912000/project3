@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Meteen_Rotterdam;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Meteen_Rotterdam
 {
@@ -46,38 +47,38 @@ namespace Meteen_Rotterdam
             return closestTuples;
         }
 
-        Map createAbstractedNode(Map node1, Map node2)
-        {
-            Vector2 positionOne = node1.printPosition();
-            Vector2 positionTwo = node2.printPosition();
-            Vector2 avgPos = new Vector2((positionOne.X + positionTwo.X) / 2, (positionOne.X + positionTwo.Y) / 2);
-            int weight;
-            int abstraction = node1.abstraction + 1;
+        //Map createAbstractedNode(Map node1, Map node2, )
+        //{
+        //    Vector2 positionOne = node1.printPosition();
+        //    Vector2 positionTwo = node2.printPosition();
+        //    Vector2 avgPos = new Vector2((positionOne.X + positionTwo.X) / 2, (positionOne.X + positionTwo.Y) / 2);
+        //    int weight;
+        //    int abstraction = node1.abstraction + 1;
+				//
+        //    if (positionOne == positionTwo)
+        //    {
+        //       weight = node1.weight;
+        //    } else
+        //    {
+        //        weight = node1.weight + node2.weight;
+        //    }
+			//			Texture2D pointer = ContentManager.Load<Texture2D>("pointer.png");
+				//		Map abstractedNode = new Map(avgPos, , weight, abstraction);
+        //    return abstractedNode;
+        //}
 
-            if (positionOne == positionTwo)
-            {
-                weight = node1.weight;
-            } else
-            {
-                weight = node1.weight + node2.weight;
-            }
+        //List<Map> createAbstractedMap(List<Map> nodes)
+        //{
+        //    List<Tuple<Map, Map>> closestTuples = produceClosestTuples(nodes);
+        //    List<Map> abstractedMap = new List<Map>();
+				//
+          //  foreach (Tuple<Map, Map> closestTuple in closestTuples)
+            //{
+              //  Map abstractedNode = createAbstractedNode(closestTuple.Item1, closestTuple.Item2);
+                //abstractedMap.Add(abstractedNode);
+            //}
 
-            Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), weight, abstraction);
-            return abstractedNode;
-        }
-
-        List<Map> createAbstractedMap(List<Map> nodes)
-        {
-            List<Tuple<Map, Map>> closestTuples = produceClosestTuples(nodes);
-            List<Map> abstractedMap = new List<Map>();
-
-            foreach (Tuple<Map, Map> closestTuple in closestTuples)
-            {
-                Map abstractedNode = createAbstractedNode(closestTuple.Item1, closestTuple.Item2);
-                abstractedMap.Add(abstractedNode);
-            }
-
-            return abstractedMap;
-        }
+//            return abstractedMap;
+  //      }
     }
 }

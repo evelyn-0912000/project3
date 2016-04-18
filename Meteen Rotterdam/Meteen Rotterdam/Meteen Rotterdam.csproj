@@ -41,8 +41,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ApplyQuery.cs" />
     <Compile Include="Button.cs" />
-    <Compile Include="Abstraction.cs" />
     <Compile Include="Fetcher.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Game1.cs" />
@@ -69,6 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\pin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\pointer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

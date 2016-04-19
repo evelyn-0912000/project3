@@ -154,10 +154,11 @@ namespace Meteen_Rotterdam
       }
 
       if (i == 1) {
-        posy = (Game1.GetCenter(texture, graphics).Y - 270);
+        posy = (Game1.GetCenter(texture, graphics).Y - 105);
+        
       }
       else if (i == 2) {
-        posy = (Game1.GetCenter(texture, graphics).Y - 105);
+        posy = (Game1.GetCenter(texture, graphics).Y - 270);
       } else {
         posy = (Game1.GetCenter(texture, graphics).Y + 60);
       }

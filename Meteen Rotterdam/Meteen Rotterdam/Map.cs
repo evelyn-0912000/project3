@@ -20,14 +20,12 @@ namespace Meteen_Rotterdam
     double centerLatitude = (51.921045);
     double centerLongitude = (4.493159);
     public int weight { get; set; }
-    public int abstraction { get; set; }
    
-    public Map(Vector2 position, Texture2D texture, int weight=1, int abstraction=1)
+    public Map(Vector2 position, Texture2D texture, int weight=1)
     {
       this.texture = texture;
       this.position = position;
       this.weight = weight;
-      this.abstraction = abstraction;
     }
 
     public void UpdatePos(Vector2 position)
@@ -38,11 +36,6 @@ namespace Meteen_Rotterdam
     public void incrementWeight()
     {
       this.weight += 1;
-    }
-
-    public void incrementAbstraction()
-    {
-      this.abstraction += 1;
     }
 
         public void UpdateVirPos(Vector2 virtualPosition) {

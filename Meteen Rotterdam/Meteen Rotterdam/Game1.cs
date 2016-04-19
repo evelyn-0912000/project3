@@ -10,7 +10,6 @@ namespace Meteen_Rotterdam
 	/// This is the main type for your game.
 	/// </summary>
 	
-	
 	public class Game1 : Game
   {
 		GraphicsDeviceManager graphics;
@@ -30,6 +29,7 @@ namespace Meteen_Rotterdam
     {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+			var content = Content;
       graphics.PreferredBackBufferHeight = height;
       graphics.PreferredBackBufferWidth = width;
 			graphics.IsFullScreen = fullsc;
@@ -55,18 +55,20 @@ namespace Meteen_Rotterdam
 		protected override void LoadContent()
     {
       // Create a new SpriteBatch, which can be used to draw textures.
-      Console.WriteLine("BUTTONS\nPurple\t...\tToggle Inside -> 2 is Empty\nYellow\t...\tAdd to Age -> 0 is Empty\nBlue\t...\tAdd to Persons -> 0 is Empty\nGreen\t...\tSwitch moods -> 0 or None is Empty\nRed\t...\tApply changes");
+      Console.WriteLine("BUTTONS\nPurple\t...\tToggle Inside -> 2 is Empty\nGreenYellow\tAdd to Min Age -> 0 is Empty\nGreen\t...\tAdd to Max Age -> 0 is Empty\nLight Blue\tAdd to Min Persons -> 0 is Empty\nBlue\t...\tAdd to Max Persons -> 0 is Empty\nYellow\t...\tSwitch moods -> 0 or None is Empty\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
-	    overlay1 = new buttonOverlay(true, graphics, Color.LightGray);
-	    buttons.Add(new PersonsButton(overlay1, graphics, Color.Blue));
-	    applyButton = new ApplyButton(overlay1, graphics, Color.Red);
-	    buttons.Add(new MoodButton(overlay1, graphics, Color.Green));
-	    buttons.Add(new OutsideButton(overlay1, graphics, Color.Purple));
-	    buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
-	    // TODO: use this.Content to load your game content here
-	    List<List<string>> pointsFromDB = new List<List<string>>();
+	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
+	    buttons.Add(new PersonsButton(false,overlay1, graphics, Content));
+			buttons.Add(new PersonsButton(true,overlay1, graphics, Content));
+			applyButton = new ApplyButton(overlay1, graphics, Color.Red);
+	    buttons.Add(new MoodButton(overlay1, graphics, Content));
+	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
+	    buttons.Add(new AgeButton(false,overlay1, graphics, Color.LightYellow));
+			buttons.Add(new AgeButton(true, overlay1, graphics, Color.Gold));
+			// TODO: use this.Content to load your game content here
+			List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
       foreach (List<string> row in pointsFromDB)
       {

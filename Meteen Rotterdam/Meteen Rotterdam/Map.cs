@@ -114,7 +114,7 @@ namespace Meteen_Rotterdam
 					color[i] = Color.Black;
 				}
 				else {
-					color[i] = new Color(100,100,100,245);
+					color[i] = additionalColor;
 				}
 			}
 			this.texture.SetData(color);

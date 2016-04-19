@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using System;
 
 namespace Meteen_Rotterdam
@@ -139,4 +140,31 @@ namespace Meteen_Rotterdam
 			}
 		}
 	}
+  public class Banner {
+    Vector2 pos;
+    Texture2D texture;
+    public Banner (int i, buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
+      this.texture = content.Load<Texture2D>("buttons/banner" + i.ToString() + ".png");
+      float posx, posy;
+      if (overlay.rightstatus) {
+        posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
+      }
+      else {
+        posx = 50;
+      }
+
+      if (i == 1) {
+        posy = (Game1.GetCenter(texture, graphics).Y - 270);
+      }
+      else if (i == 2) {
+        posy = (Game1.GetCenter(texture, graphics).Y - 105);
+      } else {
+        posy = (Game1.GetCenter(texture, graphics).Y + 60);
+      }
+      this.pos = new Vector2(posx, posy);
+    }
+    public void Draw(SpriteBatch spriteBatch) {
+      spriteBatch.Draw(texture, pos, Color.White);
+    }
+  }
 }

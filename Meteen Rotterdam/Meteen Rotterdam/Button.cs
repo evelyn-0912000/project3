@@ -52,7 +52,7 @@ namespace Meteen_Rotterdam {
           posx = 50;
         }        
       }
-      posy = (Game1.GetCenter(texture, graphics).Y - 85);
+      posy = (Game1.GetCenter(texture, graphics).Y - 25);
       pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -114,7 +114,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 155;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 20);
+			posy = (Game1.GetCenter(texture, graphics).Y + 140);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -178,7 +178,7 @@ namespace Meteen_Rotterdam {
         }
       }
       texture = textureList[age];
-			if (overlay.rightstatus == true) {
+			if (overlay.rightstatus) {
         if (max) {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
         } else {
@@ -254,7 +254,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 20);
+			posy = (Game1.GetCenter(texture, graphics).Y + 140);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {

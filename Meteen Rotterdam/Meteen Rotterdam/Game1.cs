@@ -24,6 +24,7 @@ namespace Meteen_Rotterdam
 		private buttonOverlay overlay1;
 		private ApplyButton applyButton;
 		private List<IButton> buttons = new List<IButton>();
+    private List<Banner> banners = new List<Banner>();
 
 		public Game1(int width, int height,bool fullsc)
     {
@@ -67,6 +68,9 @@ namespace Meteen_Rotterdam
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
 	    buttons.Add(new AgeButton(false,overlay1, graphics, Content));
       buttons.Add(new AgeButton(true, overlay1, graphics, Content));
+      banners.Add(new Banner(1, overlay1, graphics, Content));
+      banners.Add(new Banner(2, overlay1, graphics, Content));
+      banners.Add(new Banner(3, overlay1, graphics, Content));
       // TODO: use this.Content to load your game content here
       List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
@@ -165,6 +169,9 @@ namespace Meteen_Rotterdam
 			foreach(IButton button in buttons) {
 				button.Draw(spriteBatch);
 			}
+      foreach(Banner banner in banners) {
+        banner.Draw(spriteBatch);
+      }
       applyButton.Draw(spriteBatch, mouseState);
       spriteBatch.End();
       base.Draw(gameTime);

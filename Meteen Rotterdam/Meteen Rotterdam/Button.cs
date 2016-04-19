@@ -20,15 +20,23 @@ namespace Meteen_Rotterdam {
 		private Texture2D texture;
     private bool max;
     private List<Texture2D> textureList = new List<Texture2D>();
-		public PersonsButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) { 
+		public PersonsButton(bool max, buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) { 
       this.max = max;
 			persons = 0;
 			float posx;
 			float posy;
+			for (int i = 0; i < 13; i++) {
+				if (max) {
+					textureList.Add(content.Load<Texture2D>("buttons/personsmax" + i.ToString() + ".png"));
+				}
+				else {
+					textureList.Add(content.Load<Texture2D>("buttons/persons" + i.ToString() + ".png"));
+				}
+			}
+			texture = textureList[persons];
       if (overlay.rightstatus == true) {
         if (max) {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
-          
         } else {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
         }
@@ -36,7 +44,6 @@ namespace Meteen_Rotterdam {
       else {
         if (max) {
           posx = 155;
-
         }
         else {
           posx = 50;
@@ -63,8 +70,7 @@ namespace Meteen_Rotterdam {
         Console.WriteLine("Max persons: " + persons.ToString());
       } else {
         Console.WriteLine("Min persons: " + persons.ToString());
-      }      
-		}
+      }
 			texture = textureList[persons];
 		}
 		public void Draw(SpriteBatch spriteBatch) {
@@ -97,6 +103,7 @@ namespace Meteen_Rotterdam {
 			for (int i = 0; i < 5; i++) {
 				textureList.Add(content.Load<Texture2D>("buttons/mood" + i.ToString() + ".png"));
 			}
+
 			texture = textureList[mood];
 			if (overlay.rightstatus == true) {
 				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
@@ -235,7 +242,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y - 85);
+			posy = (Game1.GetCenter(texture, graphics).Y + 20);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {

@@ -60,13 +60,15 @@ namespace Meteen_Rotterdam
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
-	    buttons.Add(new PersonsButton(overlay1, graphics, Content));
-	    applyButton = new ApplyButton(overlay1, graphics, Color.Red);
+	    buttons.Add(new PersonsButton(false,overlay1, graphics, Content));
+			buttons.Add(new PersonsButton(true,overlay1, graphics, Content));
+			applyButton = new ApplyButton(overlay1, graphics, Color.Red);
 	    buttons.Add(new MoodButton(overlay1, graphics, Content));
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
-	    buttons.Add(new AgeButton(overlay1, graphics, Color.Yellow));
-	    // TODO: use this.Content to load your game content here
-	    List<List<string>> pointsFromDB = new List<List<string>>();
+	    buttons.Add(new AgeButton(false,overlay1, graphics, Color.LightYellow));
+			buttons.Add(new AgeButton(true, overlay1, graphics, Color.Gold));
+			// TODO: use this.Content to load your game content here
+			List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
       foreach (List<string> row in pointsFromDB)
       {
@@ -163,7 +165,7 @@ namespace Meteen_Rotterdam
 			foreach(IButton button in buttons) {
 				button.Draw(spriteBatch);
 			}
-      applyButton.Draw(spriteBatch, mouseState);
+      applyButton.Draw(spriteBatch);
       spriteBatch.End();
       base.Draw(gameTime);
 

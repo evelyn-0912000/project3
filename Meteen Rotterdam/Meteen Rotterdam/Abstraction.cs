@@ -23,7 +23,7 @@ namespace Meteen_Rotterdam
 
                 foreach (Map otherNode in nodes)
                 {
-                    if (focusNode.printPosition() != otherNode.printPosition() && skippableNodes.Contains(otherNode))
+                    if (focusNode.printPosition() != otherNode.printPosition() && !skippableNodes.Contains(otherNode))
                     {
                         Vector2 vectorDifference = Vector2.Subtract(focusNode.printPosition(), otherNode.printPosition());
                         double distance = Math.Sqrt(vectorDifference.X * vectorDifference.X + vectorDifference.Y * vectorDifference.Y);

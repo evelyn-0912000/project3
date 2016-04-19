@@ -18,7 +18,7 @@ namespace Meteen_Rotterdam
 
             foreach (Map focusNode in nodes)
             {
-                double smallestDistance = 100000000000000000000000000000000000.0;
+                double smallestDistance = double.PositiveInfinity;
                 Map closestNode = focusNode;
 
                 foreach (Map otherNode in nodes)
@@ -27,11 +27,15 @@ namespace Meteen_Rotterdam
                     {
                         Vector2 vectorDifference = Vector2.Subtract(focusNode.printPosition(), otherNode.printPosition());
                         double distance = Math.Sqrt(vectorDifference.X * vectorDifference.X + vectorDifference.Y * vectorDifference.Y);
+                        double weightedDistance = distance * 1 / (Math.Pow(focusNode.weight, .8));
 
-                        if (distance < smallestDistance)
+                        // uncomment the next line to have unweighed coalescion
+                        // weightedDistance = distance;
+
+                        if (weightedDistance < smallestDistance)
                         {
                             closestNode = otherNode;
-                            smallestDistance = distance;
+                            smallestDistance = weightedDistance;
                         }
                     }
                 }
@@ -39,22 +43,40 @@ namespace Meteen_Rotterdam
                 Tuple<Map, Map> closestTuple = new Tuple<Map, Map>(focusNode, closestNode);
                 closestTuples.Add(closestTuple);
 
-                if (closestNode.printPosition() != focusNode.printPosition())
-                {
-                    skippableNodes.Add(closestNode);
-                }
+                // uncomment the next line to have non-coalesced results
+                skippableNodes.Add(closestNode);
             }
 
             return closestTuples;
         }
 
-        Map createAbstractedNode(Map node1, Map node2, ContentManager Content)
+        Map coalescePolyNode(ContentManager Content, List<Map> nodes)
+        {
+            Vector2 avgPos = new Vector2(0, 0);
+
+            int totalWeight = 0;
+            foreach (Map node in nodes)
+            {
+                for (int i = 0; i < node.weight; i++)
+                {
+                    avgPos = Vector2.Add(avgPos, node.printPosition());
+                    totalWeight++;
+                }
+            }
+            avgPos.X = avgPos.X / totalWeight;
+            avgPos.Y = avgPos.Y / totalWeight;
+
+            Map coalescedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), totalWeight);
+
+            return coalescedNode;
+        }
+
+        Map createAbstractedNode(ContentManager Content, Map node1, Map node2)
         {
             Vector2 positionOne = node1.printPosition();
             Vector2 positionTwo = node2.printPosition();
-            Vector2 avgPos = new Vector2((positionOne.X + positionTwo.X) / 2, (positionOne.X + positionTwo.Y) / 2);
+            Vector2 avgPos = new Vector2((positionOne.X + positionTwo.X) / 2, (positionOne.Y + positionTwo.Y) / 2);
             int weight;
-            int abstraction = node1.abstraction + 1;
 
             if (positionOne == positionTwo)
             {
@@ -64,7 +86,7 @@ namespace Meteen_Rotterdam
                 weight = node1.weight + node2.weight;
             }
 
-            Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), weight, abstraction);
+            Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), weight);
             return abstractedNode;
         }
 
@@ -72,10 +94,59 @@ namespace Meteen_Rotterdam
         {
             List<Tuple<Map, Map>> closestTuples = produceClosestTuples(nodes);
             List<Map> abstractedMap = new List<Map>();
+            List<List<Tuple<Map, Map>>> coalescableNodeTupleListsWithDupes = new List<List<Tuple<Map, Map>>>();
+            List<List<Tuple<Map, Map>>> dupelessCoalescableLists = coalescableNodeTupleListsWithDupes;
 
             foreach (Tuple<Map, Map> closestTuple in closestTuples)
             {
-                Map abstractedNode = createAbstractedNode(closestTuple.Item1, closestTuple.Item2, Content);
+                foreach (Tuple<Map, Map> otherTuple in closestTuples)
+                {
+                    if (closestTuple.Item1 == otherTuple.Item1 || closestTuple.Item1 == otherTuple.Item2 || closestTuple.Item2 == otherTuple.Item1 || closestTuple.Item2 == otherTuple.Item2)
+                    {
+                        foreach (List<Tuple<Map, Map>> coalescableNodeTupleList in coalescableNodeTupleListsWithDupes)
+                        {
+                            if (coalescableNodeTupleList.Contains(closestTuple))
+                            {
+                                if (!coalescableNodeTupleList.Contains(otherTuple))
+                                {
+                                    coalescableNodeTupleList.Add(otherTuple);
+                                }
+                            } else if (coalescableNodeTupleList.Contains(otherTuple))
+                            {
+                                coalescableNodeTupleList.Add(closestTuple);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (List<Tuple<Map, Map>> coalescableNodeTupleListWithDupes in coalescableNodeTupleListsWithDupes)
+            {
+                List<Tuple<Map, Map>> dupelessList = new List<Tuple<Map, Map>>();
+                dupelessList = coalescableNodeTupleListWithDupes.Distinct().ToList();
+                dupelessCoalescableLists.Add(dupelessList);
+            }
+
+            foreach (List<Tuple<Map, Map>> dupelessList in dupelessCoalescableLists)
+            {
+                List<Map> coalescableNodes = new List<Map>();
+                foreach (Tuple<Map, Map> coalescableTuple in dupelessList)
+                {
+                    if (closestTuples.Contains(coalescableTuple)) {
+                        closestTuples.Remove(coalescableTuple);
+                    }
+
+                    coalescableNodes.Add(coalescableTuple.Item1);
+                    coalescableNodes.Add(coalescableTuple.Item2);
+                }
+
+                coalescableNodes = coalescableNodes.Distinct().ToList();
+                abstractedMap.Add(coalescePolyNode(Content, coalescableNodes));
+            }
+
+            foreach (Tuple<Map, Map> closestTuple in closestTuples)
+            {
+                Map abstractedNode = createAbstractedNode(Content, closestTuple.Item1, closestTuple.Item2);
                 abstractedMap.Add(abstractedNode);
             }
 

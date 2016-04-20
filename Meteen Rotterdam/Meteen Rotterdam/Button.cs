@@ -52,7 +52,7 @@ namespace Meteen_Rotterdam {
           posx = 50;
         }        
       }
-      posy = (Game1.GetCenter(texture, graphics).Y - 25);
+      posy = (Game1.GetCenter(texture, graphics).Y - 55);
       pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -114,7 +114,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 155;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 140);
+			posy = (Game1.GetCenter(texture, graphics).Y + 110);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -195,7 +195,7 @@ namespace Meteen_Rotterdam {
         }
         
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y -190);
+			posy = (Game1.GetCenter(texture, graphics).Y -220);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -241,8 +241,7 @@ namespace Meteen_Rotterdam {
 		private Texture2D texture;
 		private List<Texture2D> textureList = new List<Texture2D>();
 		public OutsideButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
-			float posx;
-			float posy;
+			float posx, posy;
       inside = 2;
 			for (int i = 0; i < 3; i++) {
 				textureList.Add(content.Load<Texture2D>("buttons/inside" + i.ToString() + ".png"));
@@ -254,7 +253,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 140);
+			posy = (Game1.GetCenter(texture, graphics).Y + 110);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -288,4 +287,59 @@ namespace Meteen_Rotterdam {
       }
     }
   }
+	class WeatherButton {
+		public int weather;
+		public Texture2D texture;
+		public Vector2 pos;
+		List<Texture2D> textures = new List<Texture2D>();
+		public WeatherButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
+			float posx, posy;
+			weather = 0;
+			for (int i = 0; i < 2; i++) {
+				textures.Add(content.Load<Texture2D>("buttons/WeatherButton" + i.ToString() + ".png"));
+			}
+			texture = textures[weather];
+			if (overlay.rightstatus == true) {
+				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
+			}
+			else {
+				posx = 50;
+			}
+			posy = (Game1.GetCenter(texture, graphics).Y + 190);
+			pos = new Vector2(posx, posy);
+		}
+		public bool checkMouse(MouseState mouseState) {
+			Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+			if (area.Contains(mouseState.Position)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		public void click() {
+			weather++;
+			if (weather == 2) {
+				weather = 0;
+			}
+			texture = textures[weather];
+		}
+		public void Update(MouseState mousestate, MouseState oldmousestate) {
+			if (checkMouse(mousestate)) {
+				if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released) {
+					click();
+				}
+			}
+		}
+		public void Draw(SpriteBatch spriteBatch) {
+			spriteBatch.Draw(texture, pos, Color.White);
+		}
+		public string printValue() {
+			return weather.ToString();
+		}
+		public void overwriteValue(int a) {
+			texture = textures[a];
+			weather = a;
+		}
+	}
 }

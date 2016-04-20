@@ -17,15 +17,15 @@ namespace Meteen_Rotterdam {
       float posy;
       offtexture = content.Load<Texture2D>("buttons/apply2.png");
       texture = content.Load<Texture2D>("buttons/apply1.png");
-      if (overlay.rightstatus == true) {
-        posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
-      }
-      else {
-        posx = 50;
-      }
-      posy = (Game1.GetCenter(texture, graphics).Y + 220);
-      pos = new Vector2(posx, posy);
-    }
+			if (overlay.rightstatus == true) {
+				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
+			}
+			else {
+				posx = 50;
+			}
+			posy = (Game1.GetCenter(texture, graphics).Y + 247);
+			pos = new Vector2(posx, posy);
+		}
 
     public bool checkMouse(MouseState mouseState) {
       Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
@@ -40,7 +40,7 @@ namespace Meteen_Rotterdam {
       List<string> results = new List<string>();
       List<IButton> valueButtons = new List<IButton>();
       foreach (IButton button in list) {
-        results.Add(button.printValue());
+				results.Add(button.printValue());     
       }
       bool success = true;
       if (Int32.Parse(results[0]) > Int32.Parse(results[1]) && results[1] != "0") {
@@ -52,7 +52,7 @@ namespace Meteen_Rotterdam {
         Console.WriteLine("Err: Age min is higher than age max");
       }
       if (success) {
-        string query = "SELECT a.x, a.y FROM attractions AS a INNER JOIN occasions AS o ON(o.occasion_name = a.occasion)";
+        string query = "SELECT a.x, a.y, o.indoors FROM attractions AS a INNER JOIN occasions AS o ON(o.occasion_name = a.occasion)";
         bool firstItem = true;
         if (results[0] != "0") {
           firstItem = false;

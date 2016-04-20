@@ -108,7 +108,7 @@ namespace Meteen_Rotterdam {
           }
           query += "o.age_max >= " + results[5];
         }
-        Console.WriteLine("<----><----> APPLY <----><---->");
+        Console.WriteLine(query);
         return new Tuple<bool, string>(true, query);
       }
       else {

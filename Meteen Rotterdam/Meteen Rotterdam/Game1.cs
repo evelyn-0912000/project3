@@ -60,6 +60,7 @@ namespace Meteen_Rotterdam
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg);
+			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
 	    buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
       buttons.Add(new PersonsButton(true, overlay1, graphics, Content));

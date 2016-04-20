@@ -5,23 +5,25 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace Meteen_Rotterdam {
   class ApplyButton {
     public Vector2 pos;
     private Texture2D texture;
-
-    public ApplyButton(buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+    private Texture2D offtexture;
+    public ApplyButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
       float posx;
       float posy;
-      texture = Rectangler.makeRect(200, 50, color, graphics);
+      offtexture = content.Load<Texture2D>("buttons/apply2.png");
+      texture = content.Load<Texture2D>("buttons/apply1.png");
       if (overlay.rightstatus == true) {
         posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
       }
       else {
         posx = 50;
       }
-      posy = (Game1.GetCenter(texture, graphics).Y + 100);
+      posy = (Game1.GetCenter(texture, graphics).Y + 220);
       pos = new Vector2(posx, posy);
     }
 
@@ -113,8 +115,13 @@ namespace Meteen_Rotterdam {
         return new Tuple<bool, string>(false, "");
       }      
     }
-    public void Draw(SpriteBatch spriteBatch) {
-      spriteBatch.Draw(texture, pos, Color.White);
+    public void Draw(SpriteBatch spriteBatch, MouseState mouseState) {
+      if (checkMouse(mouseState)) {
+        spriteBatch.Draw(offtexture, pos, Color.White);
+      }
+      else {
+        spriteBatch.Draw(texture, pos, Color.White);
+      }
     }
     public string printValue() {
       return null;

@@ -14,29 +14,31 @@ namespace Meteen_Rotterdam {
 		void Draw(SpriteBatch spriteBatch);
     string printValue();
   }
+
 	class PersonsButton : IButton {
 		public int persons;
 		public Vector2 pos;
 		private Texture2D texture;
     private bool max;
     private List<Texture2D> textureList = new List<Texture2D>();
+
 		public PersonsButton(bool max, buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) { 
       this.max = max;
 			persons = 0;
 			float posx;
 			float posy;
-			for (int i = 0; i < 13; i++) {
-				if (max) {
-					textureList.Add(content.Load<Texture2D>("buttons/personsmax" + i.ToString() + ".png"));
-				}
-				else {
-					textureList.Add(content.Load<Texture2D>("buttons/persons" + i.ToString() + ".png"));
-				}
-			}
-			texture = textureList[persons];
+      for (int i = 0; i < 13; i++) {
+        if (max) {
+          textureList.Add(content.Load<Texture2D>("buttons/personsmax" + i.ToString() + ".png"));
+        }else {
+          textureList.Add(content.Load<Texture2D>("buttons/persons" + i.ToString() + ".png"));
+        }
+      }
+      texture = textureList[persons];
       if (overlay.rightstatus == true) {
         if (max) {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
+          
         } else {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
         }
@@ -44,12 +46,13 @@ namespace Meteen_Rotterdam {
       else {
         if (max) {
           posx = 155;
+
         }
         else {
           posx = 50;
         }        
       }
-      posy = (Game1.GetCenter(texture, graphics).Y - 85);
+      posy = (Game1.GetCenter(texture, graphics).Y - 25);
       pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -71,8 +74,9 @@ namespace Meteen_Rotterdam {
       } else {
         Console.WriteLine("Min persons: " + persons.ToString());
       }
-			texture = textureList[persons];
-		}
+      texture = textureList[persons];
+    }
+			
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
@@ -103,7 +107,6 @@ namespace Meteen_Rotterdam {
 			for (int i = 0; i < 5; i++) {
 				textureList.Add(content.Load<Texture2D>("buttons/mood" + i.ToString() + ".png"));
 			}
-
 			texture = textureList[mood];
 			if (overlay.rightstatus == true) {
 				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
@@ -111,7 +114,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 155;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 20);
+			posy = (Game1.GetCenter(texture, graphics).Y + 140);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -161,13 +164,21 @@ namespace Meteen_Rotterdam {
     public bool max;
 		public Vector2 pos;
 		private Texture2D texture;
-		public AgeButton(bool max, buttonOverlay overlay, GraphicsDeviceManager graphics, Color color) {
+    private List<Texture2D> textureList = new List<Texture2D>();
+    public AgeButton(bool max, buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
       age = 0;
       this.max = max;
 			float posx;
 			float posy;
-			texture = Rectangler.makeRect(95, 95, color, graphics);
-			if (overlay.rightstatus == true) {
+      for (int i = 0; i < 85; i += 5) {
+        if (max) {
+          textureList.Add(content.Load<Texture2D>("buttons/agemax" + i.ToString() + ".png"));
+        }else {
+          textureList.Add(content.Load<Texture2D>("buttons/age" + i.ToString() + ".png"));
+        }
+      }
+      texture = textureList[age];
+			if (overlay.rightstatus) {
         if (max) {
           posx = graphics.PreferredBackBufferWidth - (overlay.width - 155);
         } else {
@@ -207,7 +218,8 @@ namespace Meteen_Rotterdam {
       else {
         Console.WriteLine("Min Age: " + age.ToString());
       }
-      
+
+      texture = textureList[age / 5];
 		}
 		public void Draw(SpriteBatch spriteBatch) {
 			spriteBatch.Draw(texture, pos, Color.White);
@@ -242,7 +254,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 20);
+			posy = (Game1.GetCenter(texture, graphics).Y + 140);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {

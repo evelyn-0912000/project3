@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using System;
 
 namespace Meteen_Rotterdam
@@ -20,14 +21,12 @@ namespace Meteen_Rotterdam
     double centerLatitude = (51.921045);
     double centerLongitude = (4.493159);
     public int weight { get; set; }
-    public int abstraction { get; set; }
    
-    public Map(Vector2 position, Texture2D texture, int weight=1, int abstraction=1)
+    public Map(Vector2 position, Texture2D texture, int weight=1)
     {
       this.texture = texture;
       this.position = position;
       this.weight = weight;
-      this.abstraction = abstraction;
     }
 
     public void UpdatePos(Vector2 position)
@@ -38,11 +37,6 @@ namespace Meteen_Rotterdam
     public void incrementWeight()
     {
       this.weight += 1;
-    }
-
-    public void incrementAbstraction()
-    {
-      this.abstraction += 1;
     }
 
         public void UpdateVirPos(Vector2 virtualPosition) {
@@ -146,4 +140,32 @@ namespace Meteen_Rotterdam
 			}
 		}
 	}
+  public class Banner {
+    Vector2 pos;
+    Texture2D texture;
+    public Banner (int i, buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
+      this.texture = content.Load<Texture2D>("buttons/banner" + i.ToString() + ".png");
+      float posx, posy;
+      if (overlay.rightstatus) {
+        posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
+      }
+      else {
+        posx = 50;
+      }
+
+      if (i == 1) {
+        posy = (Game1.GetCenter(texture, graphics).Y - 105);
+        
+      }
+      else if (i == 2) {
+        posy = (Game1.GetCenter(texture, graphics).Y - 270);
+      } else {
+        posy = (Game1.GetCenter(texture, graphics).Y + 60);
+      }
+      this.pos = new Vector2(posx, posy);
+    }
+    public void Draw(SpriteBatch spriteBatch) {
+      spriteBatch.Draw(texture, pos, Color.White);
+    }
+  }
 }

@@ -64,7 +64,7 @@ namespace Meteen_Rotterdam
       // Create a new SpriteBatch, which can be used to draw textures.
       Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
-      mapimg = Content.Load<Texture2D>("map.gif");
+      mapimg = Content.Load<Texture2D>("mapfinal.png");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));

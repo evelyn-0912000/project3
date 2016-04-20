@@ -27,6 +27,7 @@ namespace Meteen_Rotterdam
     private List<Banner> banners = new List<Banner>();
 		private legendOverlay legend;
 		private List<Map> clouds = new List<Map>();
+		private Map legendImg;
 		private WeatherButton weatherButton;
 		private string oldWeatherStatus;
 		private string WeatherStatus;
@@ -64,11 +65,13 @@ namespace Meteen_Rotterdam
       // Create a new SpriteBatch, which can be used to draw textures.
       Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
+			
       mapimg = Content.Load<Texture2D>("map.gif");
       map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
 			legend = new legendOverlay(graphics, new Color(100, 100, 100, 235));
+			legendImg = new Map(new Vector2(0, graphics.PreferredBackBufferHeight - legend.height), Content.Load<Texture2D>("legend.png"), "1");
 			weatherButton = new WeatherButton(overlay1, graphics, Content);
 			buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
       buttons.Add(new PersonsButton(true, overlay1, graphics, Content));
@@ -239,6 +242,7 @@ namespace Meteen_Rotterdam
       applyButton.Draw(spriteBatch, mouseState);
 			weatherButton.Draw(spriteBatch);
 			legend.Draw(spriteBatch);
+			legendImg.Draw(spriteBatch, legendImg.position);
 			abstractionButton.Draw(spriteBatch);
 			spriteBatch.End();			
       base.Draw(gameTime);

@@ -83,7 +83,7 @@ namespace Meteen_Rotterdam
       }
 
       Console.WriteLine(points.Count);
-      points = Abstraction.createAbstractedMap(points, Content);
+      // points = Abstraction.createAbstractedMap(points, Content);
       Console.WriteLine(points.Count);
 		}
 

@@ -69,6 +69,7 @@ namespace Meteen_Rotterdam
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
 	    buttons.Add(new AgeButton(false,overlay1, graphics, Content));
       buttons.Add(new AgeButton(true, overlay1, graphics, Content));
+      // buttons.add(new AbstractionButton(
       banners.Add(new Banner(1, overlay1, graphics, Content));
       banners.Add(new Banner(2, overlay1, graphics, Content));
       banners.Add(new Banner(3, overlay1, graphics, Content));
@@ -152,6 +153,15 @@ namespace Meteen_Rotterdam
           points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
         }
       }
+
+      // TODO: uncomment this once sixth button (abstraction) implemented
+      /*
+      for (int i = 0; i < buttons[6].abstractionLevel; i++)
+      {
+        points = Abstraction.createAbstractedMap(points);
+      }
+      */
+
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
 

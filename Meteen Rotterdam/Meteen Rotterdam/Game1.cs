@@ -80,6 +80,11 @@ namespace Meteen_Rotterdam
         float lon = Convert.ToSingle(row[1]);
         points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
       }
+
+      Console.WriteLine(points.Count);
+      points = Abstraction.createAbstractedMap(points, Content);
+      Console.WriteLine(points.Count);
+      Console.ReadKey();
 		}
 
 		/// <summary>

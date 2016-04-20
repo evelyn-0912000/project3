@@ -30,6 +30,7 @@ namespace Meteen_Rotterdam
 		private string oldWeatherStatus;
 		private string WeatherStatus;
 		bool applyWeather = false;
+		private AbstractionButton abstractionButton;
 		public Game1(int width, int height,bool fullsc)
     {
 			graphics = new GraphicsDeviceManager(this);
@@ -74,7 +75,7 @@ namespace Meteen_Rotterdam
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
 	    buttons.Add(new AgeButton(false,overlay1, graphics, Content));
       buttons.Add(new AgeButton(true, overlay1, graphics, Content));
-      // buttons.add(new AbstractionButton(
+			abstractionButton = new AbstractionButton(overlay1, graphics, Content);
       banners.Add(new Banner(1, overlay1, graphics, Content));
       banners.Add(new Banner(2, overlay1, graphics, Content));
       banners.Add(new Banner(3, overlay1, graphics, Content));
@@ -159,7 +160,7 @@ namespace Meteen_Rotterdam
 			if (oldWeatherStatus != WeatherStatus) {
 				applyWeather = true;
 			}
-
+			abstractionButton.Update(mouseState,oldMouseState);
       Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
       if (applyResult.Item1) {
         points.Clear();
@@ -233,7 +234,7 @@ namespace Meteen_Rotterdam
       }
       applyButton.Draw(spriteBatch, mouseState);
 			weatherButton.Draw(spriteBatch);
-			
+			abstractionButton.Draw(spriteBatch);
 			spriteBatch.End();			
       base.Draw(gameTime);
 		}

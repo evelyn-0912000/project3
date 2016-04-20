@@ -198,12 +198,21 @@ namespace Meteen_Rotterdam {
 
 		public AbstractionButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
 			this.abstractionLevel = 0;
-
+			float posx, posy;
 			for (int i = 0; i < 3; i++) {
 				textureList.Add(content.Load<Texture2D>("buttons/abstraction" + i.ToString() + ".png"));
 			}
 
 			texture = textureList[abstractionLevel];
+
+			if (overlay.rightstatus == true) {
+				posx = graphics.PreferredBackBufferWidth - (overlay.width - 50);
+			}
+			else {
+				posx = 50;
+			}
+			posy = (Game1.GetCenter(texture, graphics).Y + 300);
+			pos = new Vector2(posx, posy);
 		}
 
 		public bool checkMouse(MouseState mouseState) {
@@ -221,7 +230,6 @@ namespace Meteen_Rotterdam {
 			if (abstractionLevel == 3) {
 				abstractionLevel = 0;
 			}
-
 			texture = textureList[abstractionLevel];
 		}
 

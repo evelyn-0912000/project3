@@ -85,7 +85,6 @@ namespace Meteen_Rotterdam
       Console.WriteLine(points.Count);
       points = Abstraction.createAbstractedMap(points, Content);
       Console.WriteLine(points.Count);
-      Console.ReadKey();
 		}
 
 		/// <summary>
@@ -169,7 +168,7 @@ namespace Meteen_Rotterdam
       // TODO: Add your drawing code here
       foreach (Map point in points)
       {
-        point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
+        point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y), point.weight);
       }
 			overlay1.Draw(spriteBatch);
 			foreach(IButton button in buttons) {

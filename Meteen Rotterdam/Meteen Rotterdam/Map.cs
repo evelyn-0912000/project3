@@ -75,10 +75,12 @@ namespace Meteen_Rotterdam
       spriteBatch.Draw(texture, this.position, Color.White);
     }
 
-		public void DrawPinstyle(SpriteBatch spriteBatch, Vector2 position) {
+		public void DrawPinstyle(SpriteBatch spriteBatch, Vector2 position, int weight) {
 			float adjustedx = position.X - (texture.Width / 2);
 			float adjustedy = position.Y - texture.Height;
-			spriteBatch.Draw(texture, new Vector2(adjustedx, adjustedy));
+            Vector2 adjustedPosition = new Vector2(adjustedx, adjustedy);
+            // spriteBatch.Draw(texture, adjustedPosition, null, null, null, (float)0, new Vector2((float)weight), (float)weight);
+            spriteBatch.Draw(texture, adjustedPosition);
 		}
 
         //public Vector2 getMiddle() {

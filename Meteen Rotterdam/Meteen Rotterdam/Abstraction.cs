@@ -39,13 +39,13 @@ namespace Meteen_Rotterdam
 
                         foreach (Map skippableNode in skippableNodes)
                         {
-                            if (skippableNode.printPosition() == focusNode.printPosition() || otherNode.printPosition() == skippableNode.printPosition())
+                            if (skippableNode.printPosition() == focusNode.printPosition() || otherNode.printPosition() == skippableNode.printPosition() || focusNode.printPosition() == skippableNode.printPosition())
                             {
                                 skipped = true;
                             }
                         }
 
-                        if (weightedDistance < smallestDistance && !skipped)
+                        if (weightedDistance < smallestDistance && weightedDistance != 0 && !skipped)
                         {
                             count++;
                             // Console.WriteLine(count.ToString());
@@ -55,7 +55,7 @@ namespace Meteen_Rotterdam
                     }
                 }
 
-                if (!closestTuples.Contains(new Tuple<Map, Map>(closestNode, focusNode)))
+                if (!closestTuples.Contains(new Tuple<Map, Map>(closestNode, focusNode)) && focusNode.printPosition() != closestNode.printPosition())
                 {
                     Tuple<Map, Map> closestTuple = new Tuple<Map, Map>(focusNode, closestNode);
                     closestTuples.Add(closestTuple);
@@ -63,8 +63,8 @@ namespace Meteen_Rotterdam
                 }
 
                 // uncomment the next lines to have non-coalesced results
-                skippableNodes.Add(closestNode);
-                skippableNodes.Add(focusNode);
+                // skippableNodes.Add(closestNode);
+                // skippableNodes.Add(focusNode);
             }
 
             int singleTupleCount = 0;
@@ -81,7 +81,6 @@ namespace Meteen_Rotterdam
                 }
 
                 Console.WriteLine(String.Format("Single tuples: {0}\nUnique tuples: {1}\n", singleTupleCount, uniqueTupleCount));
-                Console.ReadKey();
             }
 
             return closestTuples;
@@ -142,7 +141,7 @@ namespace Meteen_Rotterdam
             {
                 foreach (Tuple<Map, Map> otherTuple in closestTuples)
                 {
-                    if (closestTuple.Item1 == otherTuple.Item1 || closestTuple.Item1 == otherTuple.Item2 || closestTuple.Item2 == otherTuple.Item1 || closestTuple.Item2 == otherTuple.Item2)
+                    if (closestTuple != otherTuple && (closestTuple.Item1 == otherTuple.Item1 || closestTuple.Item1 == otherTuple.Item2 || closestTuple.Item2 == otherTuple.Item1 || closestTuple.Item2 == otherTuple.Item2))
                     {
                         bool inLists = false;
                         
@@ -180,6 +179,8 @@ namespace Meteen_Rotterdam
                 }
             }
 
+            int coalescableCount = 0;
+
             // remove the coalescable nodes from the overal tuple lists, coalesce the nodes, add to map.
             foreach (List<Tuple<Map, Map>> dupelessList in dupeAddables)
             {
@@ -194,9 +195,12 @@ namespace Meteen_Rotterdam
                     coalescableNodes.Add(coalescableTuple.Item2);
                 }
 
+                coalescableCount++;
                 coalescableNodes = coalescableNodes.Distinct().ToList();
                 abstractedMap.Add(coalescePolyNode(Content, coalescableNodes));
             }
+
+            Console.WriteLine(coalescableCount.ToString() + " coalescable nodes created");
 
             Console.WriteLine(closestTuples.Count.ToString());
             
@@ -205,6 +209,11 @@ namespace Meteen_Rotterdam
             {
                 Map abstractedNode = createAbstractedNode(Content, closestTuple.Item1, closestTuple.Item2);
                 abstractedMap.Add(abstractedNode);
+            }
+
+            foreach (Map node in abstractedMap)
+            {
+                Console.WriteLine(node.weight);
             }
 
             return abstractedMap;

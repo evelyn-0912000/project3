@@ -52,7 +52,7 @@ namespace Meteen_Rotterdam {
           posx = 50;
         }        
       }
-      posy = (Game1.GetCenter(texture, graphics).Y - 25);
+      posy = (Game1.GetCenter(texture, graphics).Y - 55);
       pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -114,7 +114,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 155;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 140);
+			posy = (Game1.GetCenter(texture, graphics).Y + 110);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -195,7 +195,7 @@ namespace Meteen_Rotterdam {
         }
         
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y -190);
+			posy = (Game1.GetCenter(texture, graphics).Y -220);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -253,7 +253,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 140);
+			posy = (Game1.GetCenter(texture, graphics).Y + 110);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {
@@ -305,7 +305,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 220);
+			posy = (Game1.GetCenter(texture, graphics).Y + 190);
 			pos = new Vector2(posx, posy);
 		}
 		public bool checkMouse(MouseState mouseState) {

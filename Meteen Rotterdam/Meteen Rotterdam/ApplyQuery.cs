@@ -23,7 +23,7 @@ namespace Meteen_Rotterdam {
 			else {
 				posx = 50;
 			}
-			posy = (Game1.GetCenter(texture, graphics).Y + 280);
+			posy = (Game1.GetCenter(texture, graphics).Y + 250);
 			pos = new Vector2(posx, posy);
 		}
 

@@ -50,7 +50,6 @@ namespace Meteen_Rotterdam {
 				if (!closestTuples.Contains(new Tuple<Map, Map>(closestNode, focusNode)) && focusNode.printPosition() != closestNode.printPosition()) {
 					Tuple<Map, Map> closestTuple = new Tuple<Map, Map>(focusNode, closestNode);
 					closestTuples.Add(closestTuple);
-					Console.WriteLine(closestTuples.Count.ToString());
 				}
 
 				// uncomment the next lines to have non-coalesced results
@@ -68,8 +67,6 @@ namespace Meteen_Rotterdam {
 				else {
 					uniqueTupleCount++;
 				}
-
-				Console.WriteLine(String.Format("Single tuples: {0}\nUnique tuples: {1}\n", singleTupleCount, uniqueTupleCount));
 			}
 
 			return closestTuples;
@@ -89,7 +86,7 @@ namespace Meteen_Rotterdam {
 			avgPos.X = avgPos.X / totalWeight;
 			avgPos.Y = avgPos.Y / totalWeight;
 
-			Map coalescedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), "1", totalWeight);
+			Map coalescedNode = new Map(avgPos, Content.Load<Texture2D>("pin.png"), "1", totalWeight);
 
 			return coalescedNode;
 		}
@@ -108,7 +105,7 @@ namespace Meteen_Rotterdam {
 				weight = node1.weight + node2.weight;
 			}
 
-			Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), "1", weight);
+			Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pin.png"), "1", weight);
 			return abstractedNode;
 		}
 
@@ -173,10 +170,6 @@ namespace Meteen_Rotterdam {
 				abstractedMap.Add(coalescePolyNode(Content, coalescableNodes));
 			}
 
-			Console.WriteLine(coalescableCount.ToString() + " coalescable nodes created");
-
-			Console.WriteLine(closestTuples.Count.ToString());
-
 			// abstract the rest of the node pairs.
 			foreach (Tuple<Map, Map> closestTuple in closestTuples) {
 				Map abstractedNode = createAbstractedNode(Content, closestTuple.Item1, closestTuple.Item2);
@@ -184,7 +177,6 @@ namespace Meteen_Rotterdam {
 			}
 
 			foreach (Map node in abstractedMap) {
-				Console.WriteLine(node.weight);
 			}
 
 			return abstractedMap;

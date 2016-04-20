@@ -173,7 +173,17 @@ namespace Meteen_Rotterdam
 					string inside = row[2];
           points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
         }
-				if (applyWeather) {
+
+
+
+                for (int i = 0; i < abstractionButton.abstractionLevel; i++)
+                {
+                    Console.WriteLine(points.Count.ToString());
+                    points = Abstraction.createAbstractedMap(points, Content);
+                    Console.WriteLine(points.Count.ToString());
+                }
+
+                if (applyWeather) {
 					if (WeatherStatus == "0") {
 						clouds.Clear();
 					}
@@ -197,14 +207,6 @@ namespace Meteen_Rotterdam
 					clouds.Clear();
 				}
       }
-
-      // TODO: uncomment this once sixth button (abstraction) implemented
-      /*
-      for (int i = 0; i < buttons[6].abstractionLevel; i++)
-      {
-        points = Abstraction.createAbstractedMap(points);
-      }
-      */
 
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }

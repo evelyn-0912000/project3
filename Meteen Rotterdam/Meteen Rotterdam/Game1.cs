@@ -217,7 +217,7 @@ namespace Meteen_Rotterdam
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
     {
-			GraphicsDevice.Clear(Color.White);
+			GraphicsDevice.Clear(new Color(59, 61, 59));
       spriteBatch.Begin();
       //spriteBatch.Draw(map, new Vector2(0, 0), Color.White);
       map1.DrawMap(spriteBatch);

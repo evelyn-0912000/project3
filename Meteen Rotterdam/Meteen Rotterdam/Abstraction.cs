@@ -11,6 +11,7 @@ namespace Meteen_Rotterdam
 {
     class Abstraction
     {
+        // dummmy
         /*class AbstractionButton : IButton
         {
             public int abstractionLevel;

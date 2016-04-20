@@ -116,12 +116,13 @@ namespace Meteen_Rotterdam
 			rightstatus = right;
 			width = 300;
 			height = graphics.PreferredBackBufferHeight;
-			this.texture = new Texture2D(graphics.GraphicsDevice, width , height);
+			this.texture = new Texture2D(graphics.GraphicsDevice, width, height);
 			color = new Color[width * height];
 			for (int i = 0; i < color.Length; i++) {
 				if (i % width == 0) {
 					color[i] = new Color(0, 0, 0, 25);
-				}else if (i % width == 1) {
+				}
+				else if (i % width == 1) {
 					color[i] = new Color(0, 0, 0, 75);
 				}
 				else if (i % width == 2) {
@@ -135,7 +136,8 @@ namespace Meteen_Rotterdam
 
 			if (right == true) {
 				this.pos = new Vector2((graphics.PreferredBackBufferWidth - width), 0);
-			}	else {
+			}
+			else {
 				this.pos = new Vector2(0, 0);
 			}
 		}
@@ -143,9 +145,9 @@ namespace Meteen_Rotterdam
 			spriteBatch.Draw(texture, pos, Color.White);
 		}
 
-		public bool containsMouse (Vector2 mousePos) {
-			Rectangle area = new Rectangle((int) pos.X,(int) pos.Y,(int) pos.X + width, (int) pos.Y + height);
-			if (area.Contains(mousePos)){
+		public bool containsMouse(Vector2 mousePos) {
+			Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)pos.X + width, (int)pos.Y + height);
+			if (area.Contains(mousePos)) {
 				return true;
 			}
 			else {
@@ -153,6 +155,47 @@ namespace Meteen_Rotterdam
 			}
 		}
 	}
+	public class legendOverlay {
+		Texture2D texture;
+		Color[] color;
+		Vector2 pos;
+		public int width;
+		public int height;
+		public legendOverlay(GraphicsDeviceManager graphics, Color additionalColor) {
+			width = 200;
+			height = 250;
+			this.texture = new Texture2D(graphics.GraphicsDevice, width, height);
+			color = new Color[width * height];
+			for (int i = 0; i < color.Length; i++) {
+				if (i < (width + 1)) {
+					color[i] = new Color(0, 0, 0);
+				}
+				else if (i % width == (width - 1)) {
+					color[i] = new Color(0, 0, 0);
+				}
+				else {
+					color[i] = additionalColor;
+				}
+			}
+			this.texture.SetData(color);
+			float posy = graphics.PreferredBackBufferHeight - height;
+			this.pos = new Vector2(0, posy);
+		}
+		public void Draw(SpriteBatch spriteBatch) {
+			spriteBatch.Draw(texture, pos, Color.White);
+		}
+
+		public bool containsMouse(Vector2 mousePos) {
+			Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)pos.X + width, (int)pos.Y + height);
+			if (area.Contains(mousePos)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+
   public class Banner {
     Vector2 pos;
     Texture2D texture;

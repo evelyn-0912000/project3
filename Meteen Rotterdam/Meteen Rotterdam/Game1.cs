@@ -25,6 +25,7 @@ namespace Meteen_Rotterdam
 		private ApplyButton applyButton;
 		private List<IButton> buttons = new List<IButton>();
     private List<Banner> banners = new List<Banner>();
+		private legendOverlay legend;
 		private List<Map> clouds = new List<Map>();
 		private WeatherButton weatherButton;
 		private string oldWeatherStatus;
@@ -67,6 +68,7 @@ namespace Meteen_Rotterdam
       map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
+			legend = new legendOverlay(graphics, new Color(100, 100, 100, 235));
 			weatherButton = new WeatherButton(overlay1, graphics, Content);
 			buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
       buttons.Add(new PersonsButton(true, overlay1, graphics, Content));
@@ -131,7 +133,7 @@ namespace Meteen_Rotterdam
       mouseState = Mouse.GetState();
 			if (mouseState.LeftButton == ButtonState.Pressed) {
 				Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
-				if (overlay1.containsMouse(mousePosition) == false) {
+				if (overlay1.containsMouse(mousePosition) == false && legend.containsMouse(mousePosition) == false) {
 					if (grabOffset == Vector2.Zero) {
 						grabOffset = new Vector2(map1.printPosition().X - mousePosition.X, map1.printPosition().Y - mousePosition.Y);
 					}
@@ -171,7 +173,17 @@ namespace Meteen_Rotterdam
 					string inside = row[2];
           points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
         }
-				if (applyWeather) {
+
+
+
+                for (int i = 0; i < abstractionButton.abstractionLevel; i++)
+                {
+                    Console.WriteLine(points.Count.ToString());
+                    points = Abstraction.createAbstractedMap(points, Content);
+                    Console.WriteLine(points.Count.ToString());
+                }
+
+                if (applyWeather) {
 					if (WeatherStatus == "0") {
 						clouds.Clear();
 					}
@@ -195,14 +207,6 @@ namespace Meteen_Rotterdam
 					clouds.Clear();
 				}
       }
-
-      // TODO: uncomment this once sixth button (abstraction) implemented
-      /*
-      for (int i = 0; i < buttons[6].abstractionLevel; i++)
-      {
-        points = Abstraction.createAbstractedMap(points);
-      }
-      */
 
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
@@ -234,6 +238,7 @@ namespace Meteen_Rotterdam
       }
       applyButton.Draw(spriteBatch, mouseState);
 			weatherButton.Draw(spriteBatch);
+			legend.Draw(spriteBatch);
 			abstractionButton.Draw(spriteBatch);
 			spriteBatch.End();			
       base.Draw(gameTime);

@@ -142,7 +142,8 @@ namespace Meteen_Rotterdam
         //System.Console.WriteLine("OFFSET" + grabOffset);
         //System.Console.WriteLine("MOUSE" + mousePosition);
         //System.Console.WriteLine("MAP" + mapPosition);
-        
+        // dummy comment
+
       }
       if (mouseState.LeftButton == ButtonState.Released)
       {

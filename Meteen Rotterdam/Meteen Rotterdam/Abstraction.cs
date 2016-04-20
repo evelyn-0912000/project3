@@ -11,7 +11,8 @@ namespace Meteen_Rotterdam
 {
     class Abstraction
     {
-        List<Tuple<Map, Map>> produceClosestTuples(List<Map> nodes)
+        // produce all tuples of two nodes that are closest to each other. heavier nodes have stronger 'attraction power'.
+        public static List<Tuple<Map, Map>> produceClosestTuples(List<Map> nodes)
         {
             List<Tuple<Map, Map>> closestTuples = new List<Tuple<Map, Map>>();
             List<Map> skippableNodes = new List<Map>();
@@ -20,10 +21,12 @@ namespace Meteen_Rotterdam
             {
                 double smallestDistance = double.PositiveInfinity;
                 Map closestNode = focusNode;
-
+                
+                int count = 0;
+                
                 foreach (Map otherNode in nodes)
                 {
-                    if (focusNode.printPosition() != otherNode.printPosition() && !skippableNodes.Contains(otherNode))
+                    if (focusNode.printPosition() != otherNode.printPosition())
                     {
                         Vector2 vectorDifference = Vector2.Subtract(focusNode.printPosition(), otherNode.printPosition());
                         double distance = Math.Sqrt(vectorDifference.X * vectorDifference.X + vectorDifference.Y * vectorDifference.Y);
@@ -32,25 +35,59 @@ namespace Meteen_Rotterdam
                         // uncomment the next line to have unweighed coalescion
                         // weightedDistance = distance;
 
-                        if (weightedDistance < smallestDistance)
+                        bool skipped = false;
+
+                        foreach (Map skippableNode in skippableNodes)
                         {
+                            if (skippableNode.printPosition() == focusNode.printPosition() || otherNode.printPosition() == skippableNode.printPosition() || focusNode.printPosition() == skippableNode.printPosition())
+                            {
+                                skipped = true;
+                            }
+                        }
+
+                        if (weightedDistance < smallestDistance && weightedDistance != 0 && !skipped)
+                        {
+                            count++;
+                            // Console.WriteLine(count.ToString());
                             closestNode = otherNode;
                             smallestDistance = weightedDistance;
                         }
                     }
                 }
 
-                Tuple<Map, Map> closestTuple = new Tuple<Map, Map>(focusNode, closestNode);
-                closestTuples.Add(closestTuple);
+                if (!closestTuples.Contains(new Tuple<Map, Map>(closestNode, focusNode)) && focusNode.printPosition() != closestNode.printPosition())
+                {
+                    Tuple<Map, Map> closestTuple = new Tuple<Map, Map>(focusNode, closestNode);
+                    closestTuples.Add(closestTuple);
+                    Console.WriteLine(closestTuples.Count.ToString());
+                }
 
-                // uncomment the next line to have non-coalesced results
-                skippableNodes.Add(closestNode);
+                // uncomment the next lines to have non-coalesced results
+                // skippableNodes.Add(closestNode);
+                // skippableNodes.Add(focusNode);
+            }
+
+            int singleTupleCount = 0;
+            int uniqueTupleCount = 0;
+
+            foreach (Tuple<Map, Map> closestTuple in closestTuples)
+            {
+                if (closestTuple.Item1.printPosition() == closestTuple.Item2.printPosition())
+                {
+                    singleTupleCount++;
+                } else
+                {
+                    uniqueTupleCount++;
+                }
+
+                Console.WriteLine(String.Format("Single tuples: {0}\nUnique tuples: {1}\n", singleTupleCount, uniqueTupleCount));
             }
 
             return closestTuples;
         }
 
-        Map coalescePolyNode(ContentManager Content, List<Map> nodes)
+        // total average calculated in which heavier nodes weigh more. takes more than two nodes.
+        public static Map coalescePolyNode(ContentManager Content, List<Map> nodes)
         {
             Vector2 avgPos = new Vector2(0, 0);
 
@@ -71,7 +108,8 @@ namespace Meteen_Rotterdam
             return coalescedNode;
         }
 
-        Map createAbstractedNode(ContentManager Content, Map node1, Map node2)
+        // average positions, add weight, join together as one node.
+        public static Map createAbstractedNode(ContentManager Content, Map node1, Map node2)
         {
             Vector2 positionOne = node1.printPosition();
             Vector2 positionTwo = node2.printPosition();
@@ -90,44 +128,61 @@ namespace Meteen_Rotterdam
             return abstractedNode;
         }
 
-        List<Map> createAbstractedMap(List<Map> nodes, ContentManager Content)
+        public static List<Map> createAbstractedMap(List<Map> nodes, ContentManager Content)
         {
             List<Tuple<Map, Map>> closestTuples = produceClosestTuples(nodes);
             List<Map> abstractedMap = new List<Map>();
             List<List<Tuple<Map, Map>>> coalescableNodeTupleListsWithDupes = new List<List<Tuple<Map, Map>>>();
             List<List<Tuple<Map, Map>>> dupelessCoalescableLists = coalescableNodeTupleListsWithDupes;
+            List<List<Tuple<Map, Map>>> dupeAddables = coalescableNodeTupleListsWithDupes;
 
+            // if tuples have one of their nodes in common, they're added in a common list.
             foreach (Tuple<Map, Map> closestTuple in closestTuples)
             {
                 foreach (Tuple<Map, Map> otherTuple in closestTuples)
                 {
-                    if (closestTuple.Item1 == otherTuple.Item1 || closestTuple.Item1 == otherTuple.Item2 || closestTuple.Item2 == otherTuple.Item1 || closestTuple.Item2 == otherTuple.Item2)
+                    if (closestTuple != otherTuple && (closestTuple.Item1 == otherTuple.Item1 || closestTuple.Item1 == otherTuple.Item2 || closestTuple.Item2 == otherTuple.Item1 || closestTuple.Item2 == otherTuple.Item2))
                     {
-                        foreach (List<Tuple<Map, Map>> coalescableNodeTupleList in coalescableNodeTupleListsWithDupes)
+                        bool inLists = false;
+                        
+                        // add to list if in there.
+                        for (int i = 0; i < dupeAddables.Count; i++)
                         {
-                            if (coalescableNodeTupleList.Contains(closestTuple))
+                            if (inLists)
                             {
-                                if (!coalescableNodeTupleList.Contains(otherTuple))
-                                {
-                                    coalescableNodeTupleList.Add(otherTuple);
-                                }
-                            } else if (coalescableNodeTupleList.Contains(otherTuple))
-                            {
-                                coalescableNodeTupleList.Add(closestTuple);
+                                break;
                             }
+
+                            if (dupeAddables[i].Contains(closestTuple))
+                            {
+                                if (dupeAddables[i].Contains(otherTuple))
+                                {
+                                    dupeAddables[i].Add(otherTuple);
+                                    inLists = true;
+                                }
+                            } else if (dupeAddables[i].Contains(otherTuple))
+                            {
+                                dupeAddables[i].Add(closestTuple);
+                                inLists = true;
+                            }
+                        }
+
+                        // make new list and add said list if not.
+                        if (!inLists)
+                        {
+                            List<Tuple<Map, Map>> newList = new List<Tuple<Map, Map>>();
+                            newList.Add(closestTuple);
+                            newList.Add(otherTuple);
+                            dupeAddables.Add(newList);
                         }
                     }
                 }
             }
 
-            foreach (List<Tuple<Map, Map>> coalescableNodeTupleListWithDupes in coalescableNodeTupleListsWithDupes)
-            {
-                List<Tuple<Map, Map>> dupelessList = new List<Tuple<Map, Map>>();
-                dupelessList = coalescableNodeTupleListWithDupes.Distinct().ToList();
-                dupelessCoalescableLists.Add(dupelessList);
-            }
+            int coalescableCount = 0;
 
-            foreach (List<Tuple<Map, Map>> dupelessList in dupelessCoalescableLists)
+            // remove the coalescable nodes from the overal tuple lists, coalesce the nodes, add to map.
+            foreach (List<Tuple<Map, Map>> dupelessList in dupeAddables)
             {
                 List<Map> coalescableNodes = new List<Map>();
                 foreach (Tuple<Map, Map> coalescableTuple in dupelessList)
@@ -140,14 +195,25 @@ namespace Meteen_Rotterdam
                     coalescableNodes.Add(coalescableTuple.Item2);
                 }
 
+                coalescableCount++;
                 coalescableNodes = coalescableNodes.Distinct().ToList();
                 abstractedMap.Add(coalescePolyNode(Content, coalescableNodes));
             }
 
+            Console.WriteLine(coalescableCount.ToString() + " coalescable nodes created");
+
+            Console.WriteLine(closestTuples.Count.ToString());
+            
+            // abstract the rest of the node pairs.
             foreach (Tuple<Map, Map> closestTuple in closestTuples)
             {
                 Map abstractedNode = createAbstractedNode(Content, closestTuple.Item1, closestTuple.Item2);
                 abstractedMap.Add(abstractedNode);
+            }
+
+            foreach (Map node in abstractedMap)
+            {
+                Console.WriteLine(node.weight);
             }
 
             return abstractedMap;

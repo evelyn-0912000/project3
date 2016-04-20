@@ -15,6 +15,67 @@ namespace Meteen_Rotterdam {
     string printValue();
   }
 
+    // TODO: Use the overlay variable and set position properly
+    class AbstractionButton : IButton
+    {
+        public int abstractionLevel;
+        public Vector2 pos;
+        private Texture2D texture;
+        private List<Texture2D> textureList = new List<Texture2D>();
+
+        public AbstractionButton(buttonOverlay overlay, GraphicsDeviceManager graphics, ContentManager content) {
+            this.abstractionLevel = 0;
+
+            for (int i = 0; i < 3; i++)
+            {
+                textureList.Add(content.Load<Texture2D>("buttons/abstraction" + i.ToString() + ".png"));
+            }
+
+            texture = textureList[abstractionLevel];
+        }
+
+        public bool checkMouse(MouseState mouseState)
+        {
+            Rectangle area = new Rectangle((int)pos.X, (int)pos.Y, (int)texture.Width, (int)texture.Height);
+            if (area.Contains(mouseState.Position))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        public void click()
+        {
+            abstractionLevel++;
+            if (abstractionLevel == 3)
+            {
+                abstractionLevel = 0;
+            }
+
+            texture = textureList[abstractionLevel];
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, pos, Color.White);
+        }
+        public string printValue()
+        {
+            return abstractionLevel.ToString();
+        }
+        public void Update(MouseState mousestate, MouseState oldmousestate)
+        {
+            if (checkMouse(mousestate))
+            {
+                if (mousestate.LeftButton == ButtonState.Pressed && oldmousestate.LeftButton == ButtonState.Released)
+                {
+                    click();
+                }
+            }
+        }
+
 	class PersonsButton : IButton {
 		public int persons;
 		public Vector2 pos;

@@ -74,6 +74,7 @@ namespace Meteen_Rotterdam
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
 	    buttons.Add(new AgeButton(false,overlay1, graphics, Content));
       buttons.Add(new AgeButton(true, overlay1, graphics, Content));
+      // buttons.add(new AbstractionButton(
       banners.Add(new Banner(1, overlay1, graphics, Content));
       banners.Add(new Banner(2, overlay1, graphics, Content));
       banners.Add(new Banner(3, overlay1, graphics, Content));
@@ -90,6 +91,10 @@ namespace Meteen_Rotterdam
 				points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
 				
       }
+
+      Console.WriteLine(points.Count);
+      // points = Abstraction.createAbstractedMap(points, Content);
+      Console.WriteLine(points.Count);
 		}
 
 		/// <summary>
@@ -188,6 +193,15 @@ namespace Meteen_Rotterdam
 					clouds.Clear();
 				}
       }
+
+      // TODO: uncomment this once sixth button (abstraction) implemented
+      /*
+      for (int i = 0; i < buttons[6].abstractionLevel; i++)
+      {
+        points = Abstraction.createAbstractedMap(points);
+      }
+      */
+
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
 
@@ -204,7 +218,7 @@ namespace Meteen_Rotterdam
       // TODO: Add your drawing code here
       foreach (Map point in points)
       {
-        point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
+        point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y), point.weight);
       }
 			foreach (Map cloud in clouds) {
 				cloud.Draw(spriteBatch, map1.getMiddle() + cloud.GetCoordinates(Convert.ToDouble(cloud.lat), Convert.ToDouble(cloud.lon)) + new Vector2(-17, -50));

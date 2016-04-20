@@ -126,18 +126,20 @@ namespace Meteen_Rotterdam
             }
 
             List<List<string>> results = executeQuery(query, connectionString, pairs.Length, returnColumns);
-
+            
             return results;
+            
+
         }
 
         public static List<List<string>> initialMap(string connectionString)
         {
-            string query = @"SELECT a.x, a.y, o.indoors
+            string query = @"SELECT a.x, a.y, o.indoors, o.occasion_name
                             FROM attractions AS a
 														INNER JOIN occasions AS o
                             ON(o.occasion_name = a.occasion);";
 
-            List<List<string>> results = executeQuery(query, connectionString, 3);
+            List<List<string>> results = executeQuery(query, connectionString, 4);
 
             return results;
         }

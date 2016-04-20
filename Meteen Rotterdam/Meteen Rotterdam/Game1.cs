@@ -15,6 +15,9 @@ namespace Meteen_Rotterdam
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
     private Texture2D mapimg;
+    private Texture2D pinimg;
+    private Texture2D pinmuseum;
+    private List<Texture2D> pinlist;
     private Vector2 grabOffset;
     private MouseState mouseState;
     private MouseState oldMouseState;
@@ -66,6 +69,18 @@ namespace Meteen_Rotterdam
       Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("mapfinal.png");
+      //pinimg = Content.Load<Texture2D>("pin.png");
+      //pinmuseum = Content.Load<Texture2D>("pinmuseum.png");
+      pinlist = new List<Texture2D>();
+      pinlist.Add(Content.Load<Texture2D>("pin.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
+      pinlist.Add(Content.Load<Texture2D>("pinmuseum.png"));
       map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
@@ -92,8 +107,9 @@ namespace Meteen_Rotterdam
       {
         float lat = Convert.ToSingle(row[0]);
         float lon = Convert.ToSingle(row[1]);
+        string spin = row[3];        
 				string inside = row[2];
-				points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
+				points.Add(new Map(new Vector2(lat, lon), pinlist[checkPin(spin)], inside));
 				
       }
 
@@ -117,6 +133,19 @@ namespace Meteen_Rotterdam
       int b = (graphics.PreferredBackBufferHeight / 2) - (mapimg.Height / 2);
       return new Vector2(a, b);
     }
+
+    public int checkPin(string choice)
+    {
+      if (choice == "Musea")
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+    }
+
 
     /// <summary>
     /// Allows the game to run logic such as updating the world,
@@ -173,11 +202,10 @@ namespace Meteen_Rotterdam
           float lat = Convert.ToSingle(row[0]);
           float lon = Convert.ToSingle(row[1]);
 					string inside = row[2];
-          points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
+          System.Console.WriteLine(row[1]);
+          
+          points.Add(new Map(new Vector2(lat, lon), pinlist[0], inside));
         }
-
-
-
                 for (int i = 0; i < abstractionButton.abstractionLevel; i++)
                 {
                     Console.WriteLine(points.Count.ToString());

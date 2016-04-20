@@ -62,7 +62,7 @@ namespace Meteen_Rotterdam
 
         List<List<string>> filterNodes(string connectionString, params Tuple<string, string>[] pairs)
         {
-            string query =  @"SELECT a.x, a.y
+            string query =  @"SELECT a.x, a.y, o.indoors
                             FROM attractions AS a
                             INNER JOIN occasions AS o
                             ON(o.occasion_name = a.occasion)";
@@ -132,10 +132,12 @@ namespace Meteen_Rotterdam
 
         public static List<List<string>> initialMap(string connectionString)
         {
-            string query = @"SELECT a.x, a.y
-                            FROM attractions AS a;";
+            string query = @"SELECT a.x, a.y, o.indoors
+                            FROM attractions AS a
+														INNER JOIN occasions AS o
+                            ON(o.occasion_name = a.occasion);";
 
-            List<List<string>> results = executeQuery(query, connectionString, 2);
+            List<List<string>> results = executeQuery(query, connectionString, 3);
 
             return results;
         }

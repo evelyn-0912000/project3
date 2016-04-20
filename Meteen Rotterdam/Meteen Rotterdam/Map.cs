@@ -15,18 +15,29 @@ namespace Meteen_Rotterdam
 
   public class Map : Drawable
   {
-    Texture2D texture;
-    Vector2 position;
-    Vector2 virtualPosition;
+    public Texture2D texture;
+    public Vector2 position;
+    public Vector2 virtualPosition;
     double centerLatitude = (51.921045);
     double centerLongitude = (4.493159);
     public int weight { get; set; }
+		public string lat;
+		public string lon;
+		public bool inside;
    
-    public Map(Vector2 position, Texture2D texture, int weight=1)
+    public Map(Vector2 position, Texture2D texture, string inside, int weight= 1)
     {
+			this.lat = position.X.ToString();
+			this.lon = position.Y.ToString();
       this.texture = texture;
       this.position = position;
       this.weight = weight;
+			if (inside == "1" || inside == "True") {
+				this.inside = true;
+			}
+			else {
+				this.inside = false;
+			}
     }
 
     public void UpdatePos(Vector2 position)

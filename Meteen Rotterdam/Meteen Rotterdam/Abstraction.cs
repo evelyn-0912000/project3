@@ -66,7 +66,7 @@ namespace Meteen_Rotterdam
             avgPos.X = avgPos.X / totalWeight;
             avgPos.Y = avgPos.Y / totalWeight;
 
-            Map coalescedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), totalWeight);
+            Map coalescedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), "1",totalWeight);
 
             return coalescedNode;
         }
@@ -86,7 +86,7 @@ namespace Meteen_Rotterdam
                 weight = node1.weight + node2.weight;
             }
 
-            Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), weight);
+            Map abstractedNode = new Map(avgPos, Content.Load<Texture2D>("pointer.png"), "1",weight);
             return abstractedNode;
         }
 

@@ -25,7 +25,11 @@ namespace Meteen_Rotterdam
 		private ApplyButton applyButton;
 		private List<IButton> buttons = new List<IButton>();
     private List<Banner> banners = new List<Banner>();
-
+		private List<Map> clouds = new List<Map>();
+		private WeatherButton weatherButton;
+		private string oldWeatherStatus;
+		private string WeatherStatus;
+		bool applyWeather = false;
 		public Game1(int width, int height,bool fullsc)
     {
 			graphics = new GraphicsDeviceManager(this);
@@ -59,10 +63,11 @@ namespace Meteen_Rotterdam
       Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("map.gif");
-      map1 = new Map(GetCenter(mapimg, graphics), mapimg);
+      map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
-	    buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
+			weatherButton = new WeatherButton(overlay1, graphics, Content);
+			buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
       buttons.Add(new PersonsButton(true, overlay1, graphics, Content));
       applyButton = new ApplyButton(overlay1, graphics, Content);
 	    buttons.Add(new MoodButton(overlay1, graphics, Content));
@@ -72,6 +77,8 @@ namespace Meteen_Rotterdam
       banners.Add(new Banner(1, overlay1, graphics, Content));
       banners.Add(new Banner(2, overlay1, graphics, Content));
       banners.Add(new Banner(3, overlay1, graphics, Content));
+
+			WeatherStatus = weatherButton.printValue();
       // TODO: use this.Content to load your game content here
       List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
@@ -79,7 +86,9 @@ namespace Meteen_Rotterdam
       {
         float lat = Convert.ToSingle(row[0]);
         float lon = Convert.ToSingle(row[1]);
-        points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
+				string inside = row[2];
+				points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
+				
       }
 		}
 
@@ -138,15 +147,46 @@ namespace Meteen_Rotterdam
       foreach (IButton button in buttons) {
         button.Update(mouseState, oldMouseState);
       }
+			oldWeatherStatus = WeatherStatus;
+			weatherButton.Update(mouseState, oldMouseState);
+			WeatherStatus = weatherButton.printValue();
+			if (oldWeatherStatus != WeatherStatus) {
+				applyWeather = true;
+			}
+
       Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
       if (applyResult.Item1) {
         points.Clear();
-        var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",2);
+        var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",3);
         foreach (List<string> row in pointsFromDB) {
           float lat = Convert.ToSingle(row[0]);
           float lon = Convert.ToSingle(row[1]);
-          points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png")));
+					string inside = row[2];
+          points.Add(new Map(new Vector2(lat, lon), Content.Load<Texture2D>("pin.png"),inside));
         }
+				if (applyWeather) {
+					if (WeatherStatus == "0") {
+						clouds.Clear();
+					}
+					else {
+						foreach (Map point in points) {
+							if (point.inside != true) {
+								var weatherResult = Fetcher.FetchWeather(point.lat, point.lon);
+								if (weatherResult.Item2 == Weather.raining) {
+									clouds.Add(new Map(point.position, Content.Load<Texture2D>("cloud.png"), "1"));
+								}
+								else if (weatherResult.Item3 == true) {
+									clouds.Add(new Map(point.position, Content.Load<Texture2D>("cloud2.png"), "1"));
+								}
+							}
+						}
+					}
+					applyWeather = false;
+				}
+				else {
+					weatherButton.overwriteValue(0);
+					clouds.Clear();
+				}
       }
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
@@ -166,6 +206,9 @@ namespace Meteen_Rotterdam
       {
         point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y));
       }
+			foreach (Map cloud in clouds) {
+				cloud.Draw(spriteBatch, map1.getMiddle() + cloud.GetCoordinates(Convert.ToDouble(cloud.lat), Convert.ToDouble(cloud.lon)) + new Vector2(-17, -50));
+			}
 			overlay1.Draw(spriteBatch);
 			foreach(IButton button in buttons) {
 				button.Draw(spriteBatch);
@@ -174,12 +217,10 @@ namespace Meteen_Rotterdam
         banner.Draw(spriteBatch);
       }
       applyButton.Draw(spriteBatch, mouseState);
-      spriteBatch.End();
+			weatherButton.Draw(spriteBatch);
+			
+			spriteBatch.End();			
       base.Draw(gameTime);
-
-      
-    }
-
+		}
 	}
 }
-

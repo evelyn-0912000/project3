@@ -4,14 +4,12 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Meteen_Rotterdam
-{
+namespace Meteen_Rotterdam {
 	/// <summary>
 	/// This is the main type for your game.
 	/// </summary>
 	
-	public class Game1 : Game
-  {
+	public class Game1 : Game {
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
     private Texture2D mapimg;
@@ -32,18 +30,19 @@ namespace Meteen_Rotterdam
 		private List<Map> clouds = new List<Map>();
 		private Map legendImg;
 		private WeatherButton weatherButton;
+		private bool hasInternet;
 		private string oldWeatherStatus;
 		private string WeatherStatus;
 		bool applyWeather = false;
 		private AbstractionButton abstractionButton;
-		public Game1(int width, int height,bool fullsc)
-    {
+		public Game1(int width, int height, bool fullsc) {
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			var content = Content;
       graphics.PreferredBackBufferHeight = height;
       graphics.PreferredBackBufferWidth = width;
 			graphics.IsFullScreen = fullsc;
+			//Sets window size
 		}
 
 		/// <summary>
@@ -52,8 +51,7 @@ namespace Meteen_Rotterdam
 		/// related content.  Calling base.Initialize will enumerate through any components
 		/// and initialize them as well.
 		/// </summary>
-		protected override void Initialize()
-    {
+		protected override void Initialize() {
       // TODO: Add your initialization logic here
       this.IsMouseVisible = true;
       base.Initialize();
@@ -63,10 +61,9 @@ namespace Meteen_Rotterdam
 		/// LoadContent will be called once per game and is the place to load
 		/// all of your content.
 		/// </summary>
-		protected override void LoadContent()
-    {
-      // Create a new SpriteBatch, which can be used to draw textures.
-      Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
+		protected override void LoadContent() {
+
+			//Console.WriteLine("BUTTONS\nPurple\t...\tToggle Mood\nYellow\t...\tAdd to Min/Max Age\nGreen\t...\tAdd to Min/Max Persons\nLight Blue\tChange Inside/Outside\nRed\t...\tApply changes");
 	    spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
       mapimg = Content.Load<Texture2D>("mapfinal.png");
       //pinimg = Content.Load<Texture2D>("pin.png");
@@ -86,50 +83,47 @@ namespace Meteen_Rotterdam
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
 			legend = new legendOverlay(graphics, new Color(100, 100, 100, 235));
 			legendImg = new Map(new Vector2(0, graphics.PreferredBackBufferHeight - legend.height), Content.Load<Texture2D>("legend.png"), "1");
+			hasInternet = Fetcher.CheckInternet(); // Checks if user has internet for this session, if so: WeatherButton is used
+			if (hasInternet) {
 			weatherButton = new WeatherButton(overlay1, graphics, Content);
+				WeatherStatus = weatherButton.printValue();
+			}
+			//Buttons are loaded
 			buttons.Add(new PersonsButton(false, overlay1, graphics, Content));
       buttons.Add(new PersonsButton(true, overlay1, graphics, Content));
       applyButton = new ApplyButton(overlay1, graphics, Content);
 	    buttons.Add(new MoodButton(overlay1, graphics, Content));
 	    buttons.Add(new OutsideButton(overlay1, graphics, Content));
-	    buttons.Add(new AgeButton(false,overlay1, graphics, Content));
+			buttons.Add(new AgeButton(false, overlay1, graphics, Content));
       buttons.Add(new AgeButton(true, overlay1, graphics, Content));
 			abstractionButton = new AbstractionButton(overlay1, graphics, Content);
       banners.Add(new Banner(1, overlay1, graphics, Content));
       banners.Add(new Banner(2, overlay1, graphics, Content));
       banners.Add(new Banner(3, overlay1, graphics, Content));
 
-			WeatherStatus = weatherButton.printValue();
-      // TODO: use this.Content to load your game content here
       List<List<string>> pointsFromDB = new List<List<string>>();
       pointsFromDB = Filter.initialMap("server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;");
-      foreach (List<string> row in pointsFromDB)
+			foreach (List<string> row in pointsFromDB) // A list of pins is loaded, to draw later on.
       {
-        float lat = Convert.ToSingle(row[0]);
+				float lat = Convert.ToSingle(row[0]); // Pins are given real world coordinates
         float lon = Convert.ToSingle(row[1]);
         string spin = row[3];        
 				string inside = row[2];
 				points.Add(new Map(new Vector2(lat, lon), pinlist[Checkpin.checkPin(spin)], inside));
 				
       }
-
-      Console.WriteLine(points.Count);
-      // points = Abstraction.createAbstractedMap(points, Content);
-      Console.WriteLine(points.Count);
 		}
 
 		/// <summary>
 		/// UnloadContent will be called once per game and is the place to unload
 		/// game-specific content.
 		/// </summary>
-		protected override void UnloadContent()
-    {
-			// TODO: Unload any non ContentManager content here
+		protected override void UnloadContent() {
 		}
 
-    public static Vector2 GetCenter(Texture2D mapimg, GraphicsDeviceManager graphics)
+		public static Vector2 GetCenter(Texture2D mapimg, GraphicsDeviceManager graphics)//Method for deciding the middle of something -> will give back the coordinate to use, so that an image will be centerred
     {
-      int a = (graphics.PreferredBackBufferWidth/ 2) - (mapimg.Width / 2);
+			int a = (graphics.PreferredBackBufferWidth / 2) - (mapimg.Width / 2);
       int b = (graphics.PreferredBackBufferHeight / 2) - (mapimg.Height / 2);
       return new Vector2(a, b);
     }
@@ -139,19 +133,18 @@ namespace Meteen_Rotterdam
     /// checking for collisions, gathering input, and playing audio.
     /// </summary>
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
-    protected override void Update(GameTime gameTime)
-    {
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+		protected override void Update(GameTime gameTime) {
+			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) //Exits on escape
 				Exit();
 
 			// TODO: Add your update logic here
 
 			base.Update(gameTime);
       oldMouseState = mouseState;
-      mouseState = Mouse.GetState();
+			mouseState = Mouse.GetState();//Gets mouseStates, so it can compare current to old, if old = released, and new = pressed -> One click is done.
 			if (mouseState.LeftButton == ButtonState.Pressed) {
 				Vector2 mousePosition = new Vector2(this.mouseState.X, this.mouseState.Y);
-				if (overlay1.containsMouse(mousePosition) == false && legend.containsMouse(mousePosition) == false) {
+				if (overlay1.containsMouse(mousePosition) == false && legend.containsMouse(mousePosition) == false) { //Drags the map and pins if the mouse is not on the overlay or the legend
 					if (grabOffset == Vector2.Zero) {
 						grabOffset = new Vector2(map1.printPosition().X - mousePosition.X, map1.printPosition().Y - mousePosition.Y);
 					}
@@ -166,23 +159,24 @@ namespace Meteen_Rotterdam
         // dummy comment
 
       }
-      if (mouseState.LeftButton == ButtonState.Released)
-      {
+			if (mouseState.LeftButton == ButtonState.Released) {
         grabOffset = Vector2.Zero;
       }
 
-      foreach (IButton button in buttons) {
+			foreach (IButton button in buttons) { //Buttons are updated
         button.Update(mouseState, oldMouseState);
       }
+			if (hasInternet) { //Weatherbutton is updated if internet is active
 			oldWeatherStatus = WeatherStatus;
 			weatherButton.Update(mouseState, oldMouseState);
 			WeatherStatus = weatherButton.printValue();
 			if (oldWeatherStatus != WeatherStatus) {
 				applyWeather = true;
 			}
-			abstractionButton.Update(mouseState,oldMouseState);
-      Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
-      if (applyResult.Item1) {
+			}
+			abstractionButton.Update(mouseState, oldMouseState); //Abstractionbutton is updated
+			Tuple<bool, string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
+			if (applyResult.Item1) { //ApplyButton is updated, if it contains a new query, Item1 = true, so this will be ran.
         points.Clear();
         var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",4);
         foreach (List<string> row in pointsFromDB) {
@@ -200,7 +194,7 @@ namespace Meteen_Rotterdam
                     Console.WriteLine(points.Count.ToString());
                 }
 
-                if (applyWeather) {
+				if (applyWeather) {//Sets Weather if buttonstate is changed
 					if (WeatherStatus == "0") {
 						clouds.Clear();
 					}
@@ -211,7 +205,7 @@ namespace Meteen_Rotterdam
 								if (weatherResult.Item2 == Weather.raining) {
 									clouds.Add(new Map(point.position, Content.Load<Texture2D>("cloud.png"), "1"));
 								}
-								else if (weatherResult.Item3 == true) {
+								else {// if (weatherResult.Item3 == true) {
 									clouds.Add(new Map(point.position, Content.Load<Texture2D>("cloud2.png"), "1"));
 								}
 							}
@@ -219,11 +213,13 @@ namespace Meteen_Rotterdam
 					}
 					applyWeather = false;
 				}
-				else {
+				else { //Overwrites weather, so clouds don't stay on the map -> only if internet is active
+					if (hasInternet) {
 					weatherButton.overwriteValue(0);
 					clouds.Clear();
 				}
       }
+			}
 
       //System.Console.WriteLine("test" + GetCenter(mapimg, graphics));
     }
@@ -232,29 +228,32 @@ namespace Meteen_Rotterdam
 		/// This is called when the game should draw itself.
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Draw(GameTime gameTime)
-    {
+		protected override void Draw(GameTime gameTime) {
 			GraphicsDevice.Clear(new Color(59, 61, 59));
       spriteBatch.Begin();
       //spriteBatch.Draw(map, new Vector2(0, 0), Color.White);
       map1.DrawMap(spriteBatch);
       // TODO: Add your drawing code here
-      foreach (Map point in points)
-      {
+
+			//This just draws everything we put in it.
+			foreach (Map point in points) {
         point.DrawPinstyle(spriteBatch, map1.getMiddle() + point.GetCoordinates(point.printPosition().X, point.printPosition().Y), point.weight);
       }
 			foreach (Map cloud in clouds) {
 				cloud.Draw(spriteBatch, map1.getMiddle() + cloud.GetCoordinates(Convert.ToDouble(cloud.lat), Convert.ToDouble(cloud.lon)) + new Vector2(-17, -50));
 			}
 			overlay1.Draw(spriteBatch);
-			foreach(IButton button in buttons) {
+			foreach (IButton button in buttons) {
 				button.Draw(spriteBatch);
 			}
-      foreach(Banner banner in banners) {
+			foreach (Banner banner in banners) {
         banner.Draw(spriteBatch);
       }
       applyButton.Draw(spriteBatch, mouseState);
+			if (hasInternet) {
 			weatherButton.Draw(spriteBatch);
+			}
+
 			legend.Draw(spriteBatch);
 			legendImg.Draw(spriteBatch, legendImg.position);
 			abstractionButton.Draw(spriteBatch);

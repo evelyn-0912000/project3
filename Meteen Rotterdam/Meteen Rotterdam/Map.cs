@@ -163,7 +163,7 @@ namespace Meteen_Rotterdam
 		public int height;
 		public legendOverlay(GraphicsDeviceManager graphics, Color additionalColor) {
 			width = 200;
-			height = 275;
+			height = 355;
 			this.texture = new Texture2D(graphics.GraphicsDevice, width, height);
 			color = new Color[width * height];
 			for (int i = 0; i < color.Length; i++) {

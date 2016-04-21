@@ -82,7 +82,7 @@ namespace Meteen_Rotterdam {
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
 			legend = new legendOverlay(graphics, new Color(100, 100, 100, 235));
-			legendImg = new Map(new Vector2(0, graphics.PreferredBackBufferHeight - legend.height), Content.Load<Texture2D>("legend.png"), "1");
+			legendImg = new Map(new Vector2(0, graphics.PreferredBackBufferHeight - legend.height + 80), Content.Load<Texture2D>("legend.png"), "1");
 			hasInternet = Fetcher.CheckInternet(); // Checks if user has internet for this session, if so: WeatherButton is used
 			if (hasInternet) {
 			weatherButton = new WeatherButton(overlay1, graphics, Content);

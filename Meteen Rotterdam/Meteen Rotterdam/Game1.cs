@@ -109,7 +109,7 @@ namespace Meteen_Rotterdam
         float lon = Convert.ToSingle(row[1]);
         string spin = row[3];        
 				string inside = row[2];
-				points.Add(new Map(new Vector2(lat, lon), pinlist[checkPin(spin)], inside));
+				points.Add(new Map(new Vector2(lat, lon), pinlist[Checkpin.checkPin(spin)], inside));
 				
       }
 
@@ -133,19 +133,6 @@ namespace Meteen_Rotterdam
       int b = (graphics.PreferredBackBufferHeight / 2) - (mapimg.Height / 2);
       return new Vector2(a, b);
     }
-
-    public int checkPin(string choice)
-    {
-      if (choice == "Musea")
-      {
-        return 1;
-      }
-      else
-      {
-        return 0;
-      }
-    }
-
 
     /// <summary>
     /// Allows the game to run logic such as updating the world,
@@ -197,14 +184,14 @@ namespace Meteen_Rotterdam
       Tuple<bool,string> applyResult = applyButton.Update(mouseState, oldMouseState, buttons);
       if (applyResult.Item1) {
         points.Clear();
-        var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",3);
+        var pointsFromDB = Filter.executeQuery(applyResult.Item2, "server = 127.0.0.1; uid = root; pwd = SZ3omhSQ; database = rotterdamDB;",4);
         foreach (List<string> row in pointsFromDB) {
           float lat = Convert.ToSingle(row[0]);
           float lon = Convert.ToSingle(row[1]);
 					string inside = row[2];
-          System.Console.WriteLine(row[1]);
+          string spin = row[3];
           
-          points.Add(new Map(new Vector2(lat, lon), pinlist[0], inside));
+          points.Add(new Map(new Vector2(lat, lon), pinlist[Checkpin.checkPin(spin)], inside));
         }
                 for (int i = 0; i < abstractionButton.abstractionLevel; i++)
                 {

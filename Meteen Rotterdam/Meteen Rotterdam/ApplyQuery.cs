@@ -52,7 +52,7 @@ namespace Meteen_Rotterdam {
         Console.WriteLine("Err: Age min is higher than age max");
       }
       if (success) {
-        string query = "SELECT a.x, a.y, o.indoors FROM attractions AS a INNER JOIN occasions AS o ON(o.occasion_name = a.occasion)";
+        string query = "SELECT a.x, a.y, o.indoors, o.occasion_name FROM attractions AS a INNER JOIN occasions AS o ON(o.occasion_name = a.occasion)";
         bool firstItem = true;
         if (results[0] != "0") {
           firstItem = false;

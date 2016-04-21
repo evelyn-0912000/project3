@@ -31,6 +31,7 @@ namespace Meteen_Rotterdam {
 		private Map legendImg;
 		private WeatherButton weatherButton;
 		private bool hasInternet;
+		private Map logoimg;
 		private string oldWeatherStatus;
 		private string WeatherStatus;
 		bool applyWeather = false;
@@ -81,8 +82,9 @@ namespace Meteen_Rotterdam {
       map1 = new Map(GetCenter(mapimg, graphics), mapimg,"1");
 			Color a = new Color(100, 100, 100, 100);
 	    overlay1 = new buttonOverlay(true, graphics, new Color(100, 100, 100, 235));
-			legend = new legendOverlay(graphics, new Color(100, 100, 100, 235));
+			legend = new legendOverlay(graphics, new Color(150, 150, 150, 235));
 			legendImg = new Map(new Vector2(0, graphics.PreferredBackBufferHeight - legend.height + 80), Content.Load<Texture2D>("legend.png"), "1");
+			logoimg = new Map(new Vector2(10, graphics.PreferredBackBufferHeight - legend.height + 5), Content.Load<Texture2D>("logo-optmzd.png"), "1");
 			hasInternet = Fetcher.CheckInternet(); // Checks if user has internet for this session, if so: WeatherButton is used
 			if (hasInternet) {
 			weatherButton = new WeatherButton(overlay1, graphics, Content);
@@ -256,6 +258,7 @@ namespace Meteen_Rotterdam {
 
 			legend.Draw(spriteBatch);
 			legendImg.Draw(spriteBatch, legendImg.position);
+			logoimg.Draw(spriteBatch, logoimg.position);
 			abstractionButton.Draw(spriteBatch);
 			spriteBatch.End();			
       base.Draw(gameTime);
